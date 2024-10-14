@@ -1,37 +1,28 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import SearchScreen from './screens/SearchScreen'; // Search screen component
-import LoginScreen from './screens/LoginScreen'; // Login screen component
-import RegisterScreen from './screens/RegisterScreen'; // Register screen component
-import Home from './screens/Home'; // Home page component
-
-// Function to check if the user is authenticated
-const isAuthenticated = (): boolean => {
-  return !!localStorage.getItem('userToken'); // Check if token exists in localStorage
-};
+import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { onAuthStateChanged, signOut, User } from "firebase/auth";
+import { auth } from "./firebaseConfig";
+import Home from "./components/Home";
+import LoginRegister from "./components/LoginRegister";  // Import combined Login/Register component
 
 const App: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+
+  // Monitor Firebase Authentication state changes
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser); // Set the logged-in user or null
+    });
+
+    return () => unsubscribe();
+  }, []);
+
   return (
     <Router>
       <Routes>
-        {/* Home route: Unauthenticated users see the home page, authenticated users go to the search */}
-        <Route
-          path="/"
-          element={isAuthenticated() ? <Navigate to="/search" /> : <Home />}
-        />
-
-        {/* Login and Register routes */}
-        <Route path="/login" element={isAuthenticated() ? <Navigate to="/" /> : <LoginScreen />} />
-        <Route path="/register" element={isAuthenticated() ? <Navigate to="/" /> : <RegisterScreen />} />
-
-        {/* Protected route to the search screen */}
-        <Route
-          path="/search"
-          element={isAuthenticated() ? <SearchScreen /> : <Navigate to="/login" />}
-        />
-
-        {/* Redirect all unknown routes to home */}
-        <Route path="*" element={<Navigate to="/" />} />
+        {/* If user is logged in, show Home, otherwise redirect to login */}
+        <Route path="/" element={user ? <Home user={user} /> : <Navigate to="/login" />} />
+        <Route path="/login" element={<LoginRegister />} /> {/* Combined Login/Registration */}
       </Routes>
     </Router>
   );
