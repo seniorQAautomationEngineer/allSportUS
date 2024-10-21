@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { auth } from "./firebaseConfig";
 import Home from "./components/Home";
+import Search from "./components/Search";
 import LoginRegister from "./components/LoginRegister";  // Import combined Login/Register component
 
 const App: React.FC = () => {
@@ -23,6 +24,7 @@ const App: React.FC = () => {
         {/* If user is logged in, show Home, otherwise redirect to login */}
         <Route path="/" element={user ? <Home user={user} /> : <Navigate to="/login" />} />
         <Route path="/login" element={<LoginRegister />} /> {/* Combined Login/Registration */}
+        <Route path="/search" element={<Search />} />
       </Routes>
     </Router>
   );
