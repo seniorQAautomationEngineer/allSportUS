@@ -4,6 +4,7 @@ import axios from 'axios';
 import ClipLoader from 'react-spinners/ClipLoader';
 import ReactMarkdown from 'react-markdown';
 import { useNavigate } from 'react-router-dom';
+import { Header } from "./Header";
 import '../App.css';
 
 // Define the types for gender and sport options
@@ -109,85 +110,88 @@ const Search: React.FC = () => {
   };
 
   return (
-    <div className="app-container">
-      <h1 className="app-title">College Scholarship Finder</h1>
+    <>
+      <Header />
+      <div className="app-container">
+        <h1 className="app-title">College Scholarship Finder</h1>
 
-      {/* Log Out Button */}
-      {localStorage.getItem('userToken') && (
-        <button className="logout-btn" onClick={handleLogout}>
-          Log Out
+        {/* Log Out Button */}
+        {localStorage.getItem('userToken') && (
+          <button className="logout-btn" onClick={handleLogout}>
+            Log Out
+          </button>
+        )}
+
+        {/* Gender Selection */}
+        <div className="form-group">
+          <label>Gender:</label>
+          <Select
+            className="react-select-container"
+            classNamePrefix="react-select"
+            options={genderOptions}
+            value={gender}
+            onChange={setGender}
+          />
+        </div>
+
+        {/* Sport Selection */}
+        <div className="form-group">
+          <label>Sport:</label>
+          <Select
+            className="react-select-container"
+            classNamePrefix="react-select"
+            options={sportOptions}
+            value={sport}
+            onChange={setSport}
+          />
+        </div>
+
+        {/* Show Tennis-Specific Fields */}
+        {sport?.value === 'tennis' && (
+          <div className="tennis-stats">
+            <div className="form-group">
+              <label>Singles Record:</label>
+              <input
+                type="text"
+                value={statistics.singlesRecord}
+                onChange={(e) =>
+                  setStatistics({ ...statistics, singlesRecord: e.target.value })
+                }
+              />
+            </div>
+            <div className="form-group">
+              <label>Serve Speed (mph):</label>
+              <input
+                type="text"
+                value={statistics.serveSpeed}
+                onChange={(e) =>
+                  setStatistics({ ...statistics, serveSpeed: e.target.value })
+                }
+              />
+            </div>
+            {/* Add other tennis fields similarly */}
+          </div>
+        )}
+
+        <button className="submit-btn" onClick={handleSubmit}>
+          Submit
         </button>
-      )}
 
-      {/* Gender Selection */}
-      <div className="form-group">
-        <label>Gender:</label>
-        <Select
-          className="react-select-container"
-          classNamePrefix="react-select"
-          options={genderOptions}
-          value={gender}
-          onChange={setGender}
-        />
+        {/* Show Loading Spinner or Results */}
+        {loading ? (
+          <div className="loading-container">
+            <ClipLoader size={50} color={"#123abc"} loading={loading} />
+            <p>Waiting for response...</p>
+          </div>
+        ) : (
+          response && (
+            <div className="response-container">
+              <ReactMarkdown>{response}</ReactMarkdown>
+            </div>
+          )
+        )}
       </div>
-
-      {/* Sport Selection */}
-      <div className="form-group">
-        <label>Sport:</label>
-        <Select
-          className="react-select-container"
-          classNamePrefix="react-select"
-          options={sportOptions}
-          value={sport}
-          onChange={setSport}
-        />
-      </div>
-
-      {/* Show Tennis-Specific Fields */}
-      {sport?.value === 'tennis' && (
-        <div className="tennis-stats">
-          <div className="form-group">
-            <label>Singles Record:</label>
-            <input
-              type="text"
-              value={statistics.singlesRecord}
-              onChange={(e) =>
-                setStatistics({ ...statistics, singlesRecord: e.target.value })
-              }
-            />
-          </div>
-          <div className="form-group">
-            <label>Serve Speed (mph):</label>
-            <input
-              type="text"
-              value={statistics.serveSpeed}
-              onChange={(e) =>
-                setStatistics({ ...statistics, serveSpeed: e.target.value })
-              }
-            />
-          </div>
-          {/* Add other tennis fields similarly */}
-        </div>
-      )}
-
-      <button className="submit-btn" onClick={handleSubmit}>
-        Submit
-      </button>
-
-      {/* Show Loading Spinner or Results */}
-      {loading ? (
-        <div className="loading-container">
-          <ClipLoader size={50} color={"#123abc"} loading={loading} />
-          <p>Waiting for response...</p>
-        </div>
-      ) : (
-        response && (
-          <div className="response-container">
-            <ReactMarkdown>{response}</ReactMarkdown>
-          </div>
-        )
-      )}
-    </div>
+    </>
   );
 };
 
