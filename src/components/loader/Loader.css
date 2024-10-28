@@ -8,8 +8,8 @@
 /* CSS for troubleshooting */
 .loading-gif {
     display: block;
-    max-width: 100%;
-    height: auto;
+    width: 300px;
+    height: 300px;
     opacity: 1; /* Ensure it’s fully visible */
     z-index: 10; /* Ensure it’s not hidden behind other elements */
   }
