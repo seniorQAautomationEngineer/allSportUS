@@ -8,6 +8,7 @@ import Loader from './loader/Loader';
 import '../App.css';
 import sportConfigs from './configs/sportConfigs';
 import universityReportInstruction from './../prompts/searchPromt';
+import remarkGfm from 'remark-gfm';
 
 // Define the type for options in the Select component
 interface Option {
@@ -128,9 +129,12 @@ const Search: React.FC = () => {
         <button className="submit-btn" onClick={handleSubmit}>
           Submit
         </button>
-
         {loading && <Loader />}
-        {response && <ReactMarkdown>{response}</ReactMarkdown>}
+        {response && (
+          <div className="markdown-content">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{response}</ReactMarkdown>
+          </div>
+        )}
       </div>
     </>
   );
