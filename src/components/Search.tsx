@@ -5,6 +5,7 @@ import ClipLoader from 'react-spinners/ClipLoader';
 import ReactMarkdown from 'react-markdown';
 import { useNavigate } from 'react-router-dom';
 import { Header } from "./Header";
+import Loader from './loader/Loader';
 import '../App.css';
 
 // Define the types for gender and sport options
@@ -55,7 +56,9 @@ const Search: React.FC = () => {
     unforcedErrorsPerMatch: '',
   });
   const [response, setResponse] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
+const [loading, setLoading] = useState<boolean>(false);
+
+
   const navigate = useNavigate();
 
   // Log Out function
@@ -68,6 +71,8 @@ const Search: React.FC = () => {
   const handleSubmit = async () => {
     setResponse('');
     setLoading(true);
+
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     const prompt = `Give me the top 20 colleges in ${sport?.label} among NCAA divisions I and II where the results below could realistically grant a high athletic scholarship based on last season’s data.
     
@@ -93,7 +98,7 @@ const Search: React.FC = () => {
         },
         {
           headers: {
-            'Authorization': `Bearer YOUR_API_KEY`, // Replace with actual API key
+            'Authorization': ``, // Replace with actual API key
             'Content-Type': 'application/json',
           },
         }
@@ -176,19 +181,11 @@ const Search: React.FC = () => {
         <button className="submit-btn" onClick={handleSubmit}>
           Submit
         </button>
-
-        {/* Show Loading Spinner or Results */}
-        {loading ? (
-          <div className="loading-container">
-            <ClipLoader size={50} color={"#123abc"} loading={loading} />
-            <p>Waiting for response...</p>
+        {loading && <Loader />} {/* Loader displayed when loading is true */}
+        {response && (
+          <div className="response-container">
+            <ReactMarkdown>{response}</ReactMarkdown>
           </div>
-        ) : (
-          response && (
-            <div className="response-container">
-              <ReactMarkdown>{response}</ReactMarkdown>
-            </div>
-          )
         )}
       </div>
     </>
