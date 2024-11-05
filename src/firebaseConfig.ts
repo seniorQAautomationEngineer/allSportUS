@@ -5,7 +5,6 @@ import { getFirestore } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
   authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
@@ -25,6 +24,7 @@ const auth = getAuth(app);
 // Initialize Firestore (if you're using it)
 const db = getFirestore(app);
 
-export { auth, db };
+// Initialize Firebase Functions
+const functions = getFunctions(app);
 
-export const functions = getFunctions(app);
+export { auth, db, functions };

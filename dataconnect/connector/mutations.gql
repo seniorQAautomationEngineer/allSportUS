@@ -1,50 +1,51 @@
-# # Example mutations for a simple movie app
+mutation CreateUser(
+  $uid: String!
+  $firstName: String!
+  $lastName: String!
+  $email: String!
+  $country: String!
+  $createdAt: Timestamp!
+) {
+  user_insert(
+    data: {
+      uid: $uid
+      firstName: $firstName
+      lastName: $lastName
+      email: $email
+      country: $country
+      createdAt: $createdAt
+    }
+  )
+}
 
-# # Create a movie based on user input
-# mutation CreateMovie(
-#   $title: String!
-#   $genre: String!
-#   $imageUrl: String!
-# ) @auth(level: USER_EMAIL_VERIFIED) {
-#   movie_insert(
-#     data: {
-#       title: $title
-#       genre: $genre
-#       imageUrl: $imageUrl
-#     }
-#   )
-# }
 
-# # Upsert (update or insert) a user's username based on their auth.uid
-# mutation UpsertUser($username: String!) @auth(level: USER) {
-#   user_upsert(
-#     data: {
-#       id_expr: "auth.uid"
-#       username: $username
-#     }
-#   )
-# }
+mutation UpsertAthleteResume(
+  $id: UUID
+  $userId: UUID!
+  $gender: String!
+  $sport: String!
+  $parameters: [String!]
+  $updatedAt: Timestamp!
+) {
+  athleteResume_upsert(
+    data: {
+      id: $id # Include if updating; omit if inserting
+      userId: $userId
+      gender: $gender
+      sport: $sport
+      parameters: $parameters
+      updatedAt: $updatedAt
+    }
+  )
+}
 
-# # Add a review for a movie
-# mutation AddReview(
-#   $movieId: UUID!
-#   $rating: Int!
-#   $reviewText: String!
-# ) @auth(level: USER) {
-#   review_upsert(
-#     data: {
-#       userId_expr: "auth.uid"
-#       movieId: $movieId
-#       rating: $rating
-#       reviewText: $reviewText
-#       # reviewDate defaults to today in the schema. No need to set it manually.
-#     }
-#   )
-# }
 
-# # Logged in user can delete their review for a movie
-# mutation DeleteReview(
-#   $movieId: UUID!
-# ) @auth(level: USER) {
-#   review_delete(key: { userId_expr: "auth.uid", movieId: $movieId })
-# }
+mutation DeleteAthleteResume(
+  $resumeId: UUID!
+) {
+  athleteResume_delete(
+    key: { id: $resumeId }
+  )
+}
+
+
