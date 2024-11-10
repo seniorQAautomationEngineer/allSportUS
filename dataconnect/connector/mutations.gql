@@ -19,7 +19,7 @@ mutation CreateUser(
 }
 
 
-mutation UpsertAthleteResume(
+mutation InsertAthleteResume(
   $id: UUID
   $userId: UUID!
   $gender: String!
@@ -29,7 +29,7 @@ mutation UpsertAthleteResume(
 ) {
   athleteResume_upsert(
     data: {
-      id: $id # Include if updating; omit if inserting
+      id: $id  # Include if updating; omit if inserting
       userId: $userId
       gender: $gender
       sport: $sport
