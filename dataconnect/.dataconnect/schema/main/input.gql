@@ -225,13 +225,13 @@ input User_Data {
   """
   lastName_expr: String_Expr
   """
-  ✨ Generated from Field `User`.`uid` of type `String!`
+  ✨ Generated from Field `User`.`uid` of type `UUID!`
   """
-  uid: String
+  uid: UUID
   """
-  ✨ `_expr` server value variant of `uid` (✨ Generated from Field `User`.`uid` of type `String!`)
+  ✨ `_expr` server value variant of `uid` (✨ Generated from Field `User`.`uid` of type `UUID!`)
   """
-  uid_expr: String_Expr
+  uid_expr: UUID_Expr
 }
 """
 ✨ Generated filter input type for table 'User'. This input allows filtering objects using various conditions. Use `_or`, `_and`, and `_not` to compose complex filters.
@@ -274,9 +274,9 @@ input User_Filter {
   """
   lastName: String_Filter
   """
-  ✨ Generated from Field `User`.`uid` of type `String!`
+  ✨ Generated from Field `User`.`uid` of type `UUID!`
   """
-  uid: String_Filter
+  uid: UUID_Filter
 }
 """
 ✨ Generated first-row input type for table 'User'. This input selects the first row matching the filter criteria, ordered according to the specified conditions.
@@ -346,7 +346,7 @@ input User_Order {
   """
   lastName: OrderDirection
   """
-  ✨ Generated from Field `User`.`uid` of type `String!`
+  ✨ Generated from Field `User`.`uid` of type `UUID!`
   """
   uid: OrderDirection
 }

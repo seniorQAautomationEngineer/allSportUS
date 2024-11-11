@@ -1,0 +1,13 @@
+
+# This is a file for you to write an un-named queries. 
+# Only one un-named query is allowed per file.
+query {
+  users{
+    uid
+    firstName
+    lastName
+    email
+    country
+    createdAt
+  }
+}

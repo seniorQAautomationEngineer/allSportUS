@@ -1,6 +1,6 @@
 type User @table {
   id: UUID! @default(expr: "uuidV4()")
-  uid: String! @unique
+  uid: UUID! @default(expr: "uuidV4()")
   firstName: String!
   lastName: String!
   email: String! @unique
@@ -9,10 +9,10 @@ type User @table {
 }
 
 type AthleteResume @table {
-  id: UUID! @default(expr: "uuidV4()")
-  userId: UUID!
+  id: UUID! @default(expr: "uuidV4()") # Unique ID for each resume
+  userId: UUID! @unique # UUID field intended to match User.id
   gender: String!
   sport: String!
-  parameters: [String]! # Array for sport-specific parameters
-  updatedAt: Timestamp! @default(expr: "request.time") # Use request time
+  parameters: [String]!
+  updatedAt: Timestamp! @default(expr: "request.time")
 }

@@ -1,27 +1,31 @@
+# CreateUserMutation.gql
+
 mutation CreateUser(
-  $uid: String!
-  $firstName: String!
-  $lastName: String!
-  $email: String!
-  $country: String!
+  $id: UUID!,
+  $uid: UUID!,
+  $firstName: String!,
+  $lastName: String!,
+  $email: String!,
+  $country: String!,
   $createdAt: Timestamp!
 ) {
   user_insert(
     data: {
-      uid: $uid
-      firstName: $firstName
-      lastName: $lastName
-      email: $email
-      country: $country
+      id: $id,
+      uid: $uid, 
+      firstName: $firstName,
+      lastName: $lastName,
+      email: $email,
+      country: $country,
       createdAt: $createdAt
     }
   )
 }
 
 
-mutation InsertAthleteResume(
-  $id: UUID
-  $userId: UUID!
+
+mutation UpsertAthleteResume(
+  $userId: User!
   $gender: String!
   $sport: String!
   $parameters: [String!]
@@ -29,7 +33,6 @@ mutation InsertAthleteResume(
 ) {
   athleteResume_upsert(
     data: {
-      id: $id  # Include if updating; omit if inserting
       userId: $userId
       gender: $gender
       sport: $sport
