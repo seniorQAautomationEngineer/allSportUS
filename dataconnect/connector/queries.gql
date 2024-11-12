@@ -1,22 +1,22 @@
-# Query to get a user by UID
-query GetUserByUid($id: UUID!) {
-  users(where: { id: { eq: $id } }) {
-    id
-    firstName
-    lastName
-    email
-    country
-    createdAt
-  }
-}
+# # Query to get a user by UID
+# query GetUserByUid($id: UUID!) {
+#   users(where: { id: { eq: $id } }) {
+#     id
+#     firstName
+#     lastName
+#     email
+#     country
+#     createdAt
+#   }
+# }
 
-# Query to get all athlete resumes for a specific user ID
-query GetAthleteResumesByUserId($userId: UUID!) {
-  athleteResumes(where: { userId: { eq: $userId } }) {
-    id
-    gender
-    sport
-    parameters
-    updatedAt
-  }
-}
+# # Query to get all athlete resumes for a specific user ID
+# query GetAthleteResumesByUserId($userId: UUID!) {
+#   athleteResumes(where: { userId: { eq: $userId } }) {
+#     id
+#     gender
+#     sport
+#     parameters
+#     updatedAt
+#   }
+# }

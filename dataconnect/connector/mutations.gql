@@ -1,54 +1,44 @@
 # CreateUserMutation.gql
 
-mutation CreateUser(
-  $id: UUID!,
-  $uid: UUID!,
-  $firstName: String!,
-  $lastName: String!,
-  $email: String!,
-  $country: String!,
-  $createdAt: Timestamp!
-) {
-  user_insert(
-    data: {
-      id: $id,
-      uid: $uid, 
-      firstName: $firstName,
-      lastName: $lastName,
-      email: $email,
-      country: $country,
-      createdAt: $createdAt
-    }
-  )
-}
+# mutation CreateUser($id: UUID!, $firstName: String!, $lastName: String!, $email: String!, $country: String!, $createdAt: Timestamp!) {
+#   user_insert(
+#     data: {
+#       id: $id,
+#       firstName: $firstName,
+#       lastName: $lastName,
+#       email: $email,
+#       country: $country,
+#       createdAt: $createdAt
+#     }
+#   )
+# }
 
 
 
-mutation UpsertAthleteResume(
-  $userId: User!
-  $gender: String!
-  $sport: String!
-  $parameters: [String!]
-  $updatedAt: Timestamp!
-) {
-  athleteResume_upsert(
-    data: {
-      userId: $userId
-      gender: $gender
-      sport: $sport
-      parameters: $parameters
-      updatedAt: $updatedAt
-    }
-  )
-}
+# mutation UpsertAthleteResume(
+#   $userId: User!
+#   $gender: String!
+#   $sport: String!
+#   $parameters: [String!]
+#   $updatedAt: Timestamp!
+# ) {
+#   athleteResume_upsert(
+#     data: {
+#       userId: $userId
+#       gender: $gender
+#       sport: $sport
+#       parameters: $parameters
+#       updatedAt: $updatedAt
+#     }
+#   )
+# }
 
 
-mutation DeleteAthleteResume(
-  $resumeId: UUID!
-) {
-  athleteResume_delete(
-    key: { id: $resumeId }
-  )
-}
-
+# mutation DeleteAthleteResume(
+#   $resumeId: UUID!
+# ) {
+#   athleteResume_delete(
+#     key: { id: $resumeId }
+#   )
+# }
 

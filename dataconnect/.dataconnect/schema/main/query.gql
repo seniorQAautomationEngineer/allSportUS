@@ -1,24 +1,5 @@
 extend type Query {
   """
-  ✨ Look up a single `AthleteResume` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
-  """
-  athleteResume(
-    """
-    The unique ID of the object.
-    """
-    id: UUID
-
-    """
-    The key used to identify the object.
-    """
-    key: AthleteResume_Key
-
-    """
-    Fetch the first row based on the filters and ordering.
-    """
-    first: AthleteResume_FirstRow
-  ): AthleteResume @fdc_generated(from: "AthleteResume", purpose: QUERY_SINGLE)
-  """
   ✨ Look up a single `User` based on `id`, `key` or `first` and return selected fields (or `null` if not found).
   """
   user(
@@ -37,30 +18,6 @@ extend type Query {
     """
     first: User_FirstRow
   ): User @fdc_generated(from: "User", purpose: QUERY_SINGLE)
-  """
-  ✨ List `AthleteResume` objects in the table, optionally filtered by `where` conditions.
-  """
-  athleteResumes(
-    """
-    Filter condition to narrow down the query results.
-    """
-    where: AthleteResume_Filter
-
-    """
-    Order the query results by specific fields.
-    """
-    orderBy: [AthleteResume_Order!]
-
-    """
-    Number of rows to skip before starting to return the results.
-    """
-    offset: Int
-
-    """
-    Maximum number of rows to return (defaults to 100 rows).
-    """
-    limit: Int = 100
-  ): [AthleteResume!]! @fdc_generated(from: "AthleteResume", purpose: QUERY_MULTIPLE)
   """
   ✨ List `User` objects in the table, optionally filtered by `where` conditions.
   """

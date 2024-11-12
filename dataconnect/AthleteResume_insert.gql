@@ -1,0 +1,13 @@
+# # This is a file for you to write an un-named mutation. 
+# # Only one un-named mutation is allowed per file.
+# mutation {
+#   athleteResume_insert(
+#     data: {id: "11111111222233334444555555555555", gender: "", parameters: "", sport: "", updatedAt: "2024-11-11T00:40:12.274Z", userId: "11111111222233334444555555555555"}
+#   )
+# }# This is a file for you to write an un-named mutation. 
+# # Only one un-named mutation is allowed per file.
+# mutation {
+#   athleteResume_insert(
+#     data: {id: "11111111-2222-3333-4444-555555555555", gender: "", parameters: "", sport: "", updatedAt: "2024-11-11T00:39:25.064Z", userId: "8e587d308b624327a06d91d2321fbaba"}
+#   )
+# }

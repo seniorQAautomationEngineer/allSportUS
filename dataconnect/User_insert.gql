@@ -1,11 +1,10 @@
 mutation CreateUser {
   user_insert(
     data: {
-      id: "8e587d30-8b62-4327-a06d-91d2321fbaba",
-      uid: "11111111-2222-3333-4444-555555555555", # Ensure this is a unique identifier
+      id: "41111111-2222-3333-4444-555555555555", # Valid UUID format
       firstName: "AL",
       lastName: "La",
-      email: "ueuu@gmail.com",
+      email: "3jj737@gmail.com",
       country: "US",
       createdAt: "2024-11-10T02:52:07Z"
     }

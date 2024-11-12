@@ -6,7 +6,12 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "typeRoots": ["src/types", "node_modules/@types"],
+    "baseUrl": ".", // Ensure this points to the root of your project
+    "paths": {
+      "@all-sports-us/*": ["src/dataconnect-generated/js/default-connector/*"]
+    }
   },
   "include": [
     "src/**/*.tsx"
