@@ -24,8 +24,9 @@ const LoginRegister: React.FC = () => {
         // Register the user with Firebase Authentication
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         navigate("/"); 
+       // const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        const userId = uuidv4();
+        const userId = user.uid; // This is the `localId` from Firebase
         const createdAt = new Date().toISOString();
 
         // Get the Firebase ID token for authentication
