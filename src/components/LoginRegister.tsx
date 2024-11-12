@@ -23,6 +23,7 @@ const LoginRegister: React.FC = () => {
       if (isRegistering) {
         // Register the user with Firebase Authentication
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        navigate("/"); 
         const user = userCredential.user;
         const userId = uuidv4();
         const createdAt = new Date().toISOString();
@@ -41,14 +42,10 @@ const LoginRegister: React.FC = () => {
         });
 
         // Call the mutation with ID token in headers
-        const result = await executeMutation(createUserMutationRef, {
-          headers: {
-            Authorization: `Bearer ${idToken}`,
-          },
-        });
+        const result = await executeMutation(createUserMutationRef);
 
         console.log("User created successfully in Data Connect:", result);
-        navigate("/");  // Redirect on success
+        // Redirect on success
 
       } else {
         // If logging in, authenticate with Firebase
