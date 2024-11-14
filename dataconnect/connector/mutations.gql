@@ -1,17 +1,29 @@
 # CreateUserMutation.gql
+mutation CreateUser(
+  $id: UUID!,
+  $authUid: String!,
+  $firstName: String!, 
+  $lastName: String!, 
+  $email: String!, 
+  $country: String!, 
+  $age: Int,                      # New age parameter
+  $createdAt: Timestamp!
+) {
+  user_upsert(
+    data: {
+      id: $id,
+      authUid: $authUid,
+      firstName: $firstName,
+      lastName: $lastName,
+      email: $email,
+      country: $country,
+      age: $age,                 # Include age in data
+      createdAt: $createdAt
+    }
+  )
+}
 
-# mutation CreateUser($id: UUID!, $firstName: String!, $lastName: String!, $email: String!, $country: String!, $createdAt: Timestamp!) {
-#   user_insert(
-#     data: {
-#       id: $id,
-#       firstName: $firstName,
-#       lastName: $lastName,
-#       email: $email,
-#       country: $country,
-#       createdAt: $createdAt
-#     }
-#   )
-# }
+
 
 
 

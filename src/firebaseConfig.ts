@@ -4,6 +4,7 @@ import { getAuth } from "firebase/auth";  // For Firebase Authentication
 import { getFirestore } from "firebase/firestore"; 
 import { getFunctions } from "firebase/functions";
 
+
 // Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -22,7 +23,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // Initialize Firestore (if you're using it)
-const db = getFirestore(app);
+const db = getFirestore(app, 'sport');
 
 // Initialize Firebase Functions
 const functions = getFunctions(app);

@@ -1,3 +1,0 @@
-mutation CreateUser($id: UUID!, $firstName: String!, $lastName: String!, $email: String!, $country: String!, $createdAt: Timestamp!) {
-  user_insert(data: { id: $id, firstName: $firstName, lastName: $lastName, email: $email, country: $country, createdAt: $createdAt })
-}

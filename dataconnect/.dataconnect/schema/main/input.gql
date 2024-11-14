@@ -17,6 +17,18 @@ input User_Data {
   """
   id_expr: UUID_Expr
   """
+  ✨ Generated from Field `User`.`age` of type `Int`
+  """
+  age: Int
+  """
+  ✨ Generated from Field `User`.`authUid` of type `String!`
+  """
+  authUid: String
+  """
+  ✨ `_expr` server value variant of `authUid` (✨ Generated from Field `User`.`authUid` of type `String!`)
+  """
+  authUid_expr: String_Expr
+  """
   ✨ Generated from Field `User`.`country` of type `String`
   """
   country: String
@@ -81,6 +93,14 @@ input User_Filter {
   ✨ Generated from Field `User`.`id` of type `UUID!`
   """
   id: UUID_Filter
+  """
+  ✨ Generated from Field `User`.`age` of type `Int`
+  """
+  age: Int_Filter
+  """
+  ✨ Generated from Field `User`.`authUid` of type `String!`
+  """
+  authUid: String_Filter
   """
   ✨ Generated from Field `User`.`country` of type `String`
   """
@@ -149,6 +169,14 @@ input User_Order {
   ✨ Generated from Field `User`.`id` of type `UUID!`
   """
   id: OrderDirection
+  """
+  ✨ Generated from Field `User`.`age` of type `Int`
+  """
+  age: OrderDirection
+  """
+  ✨ Generated from Field `User`.`authUid` of type `String!`
+  """
+  authUid: OrderDirection
   """
   ✨ Generated from Field `User`.`country` of type `String`
   """

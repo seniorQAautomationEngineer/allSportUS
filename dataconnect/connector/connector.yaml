@@ -4,4 +4,3 @@ generate:
     outputDir: dataconnect-generated/js/default-connector
     package: "@firebasegen/default-connector"
     packageJsonDir: ""
-    jsPackagName: "all-sports"

@@ -1,6 +1,7 @@
 specVersion: "v1beta"
 serviceId: "all-sports-db-id"
 location: "us-east1"
+authMode: "PUBLIC" 
 schema:
   source: "./schema"
   datasource:

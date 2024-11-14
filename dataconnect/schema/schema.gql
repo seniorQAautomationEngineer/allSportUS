@@ -1,11 +1,14 @@
 type User @table {
   id: UUID! @default(expr: "uuidV4()")
+  authUid: String!
   firstName: String!
   lastName: String!
   email: String! @unique
   country: String
-  createdAt: Timestamp! @default(expr: "request.time") # Use request time instead of now()
+  age: Int  # New age field
+  createdAt: Timestamp! @default(expr: "request.time") # Use request time
 }
+
 
 # type AthleteResume @table {
 #   id: UUID! @default(expr: "uuidV4()") # Unique ID for each resume
