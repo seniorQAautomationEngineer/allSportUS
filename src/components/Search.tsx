@@ -9,6 +9,8 @@ import sportConfigs from "./configs/sportConfigs"; // Configurations for sports 
 import { auth, db } from "../firebaseConfig"; // Firebase setup
 import remarkGfm from "remark-gfm";
 import ReactMarkdown from "react-markdown";
+import axios from 'axios';
+import universityReportInstruction from './../prompts/searchPromt';
 
 // Define the type for options in the Select component
 interface Option {
@@ -102,16 +104,32 @@ const Search: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    setResponse("");
+    setResponse('');
     setLoading(true);
 
+    // Construct prompt dynamically using selected sport's parameters
+    const statEntries = parameters
+      .map((param) => `${param}: ${statistics[param] || "N/A"}`)
+      .join(', '); // Join with a comma and space for a single line
+
+    const prompt = `Identify the top 10 NCAA Division 1 universities for a  ${gender?.label} ${sport?.label} player with the following profile: Athletic Stats: \n${statEntries} \n${universityReportInstruction}`;
+
     try {
-      // Use gender, sport, and statistics to fetch data (mockup logic here)
-      const data = `Gender: ${gender?.label}, Sport: ${sport?.label}, Statistics: ${JSON.stringify(statistics)}`;
-      setResponse(`Response based on data: ${data}`);
+      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+        model: 'gpt-4',
+        messages: [{ role: 'user', content: prompt }],
+      }, {
+        headers: {
+          'Authorization': ``,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const rawResponse = response.data.choices[0]?.message?.content || 'No valid response received.';
+      setResponse(rawResponse);
     } catch (error) {
-      console.error("Error fetching data:", error);
-      setResponse("Error fetching data. Please try again later.");
+      console.error('Error fetching data:', error);
+      setResponse('Error fetching data. Please try again later.');
     } finally {
       setLoading(false);
     }
