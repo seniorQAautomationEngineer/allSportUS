@@ -50,20 +50,20 @@ export interface User_Key {
 
 
 /* Allow users to create refs without passing in DataConnect */
-export function getUserByUidRef(vars: GetUserByUidVariables): QueryRef<GetUserByUidData, GetUserByUidVariables>;
-/* Allow users to pass in custom DataConnect instances */
-export function getUserByUidRef(dc: DataConnect, vars: GetUserByUidVariables): QueryRef<GetUserByUidData,GetUserByUidVariables>;
-
-export function getUserByUid(vars: GetUserByUidVariables): QueryPromise<GetUserByUidData, GetUserByUidVariables>;
-export function getUserByUid(dc: DataConnect, vars: GetUserByUidVariables): QueryPromise<GetUserByUidData,GetUserByUidVariables>;
-
-
-/* Allow users to create refs without passing in DataConnect */
 export function createUserRef(vars: CreateUserVariables): MutationRef<CreateUserData, CreateUserVariables>;
 /* Allow users to pass in custom DataConnect instances */
 export function createUserRef(dc: DataConnect, vars: CreateUserVariables): MutationRef<CreateUserData,CreateUserVariables>;
 
 export function createUser(vars: CreateUserVariables): MutationPromise<CreateUserData, CreateUserVariables>;
 export function createUser(dc: DataConnect, vars: CreateUserVariables): MutationPromise<CreateUserData,CreateUserVariables>;
+
+
+/* Allow users to create refs without passing in DataConnect */
+export function getUserByUidRef(vars: GetUserByUidVariables): QueryRef<GetUserByUidData, GetUserByUidVariables>;
+/* Allow users to pass in custom DataConnect instances */
+export function getUserByUidRef(dc: DataConnect, vars: GetUserByUidVariables): QueryRef<GetUserByUidData,GetUserByUidVariables>;
+
+export function getUserByUid(vars: GetUserByUidVariables): QueryPromise<GetUserByUidData, GetUserByUidVariables>;
+export function getUserByUid(dc: DataConnect, vars: GetUserByUidVariables): QueryPromise<GetUserByUidData,GetUserByUidVariables>;
 
 

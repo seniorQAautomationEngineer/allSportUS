@@ -112,19 +112,47 @@ const Search: React.FC = () => {
       .map((param) => `${param}: ${statistics[param] || "N/A"}`)
       .join(', '); // Join with a comma and space for a single line
 
-    const prompt = `Identify the top 10 NCAA Division 1 universities for a  ${gender?.label} ${sport?.label} player with the following profile: Athletic Stats: \n${statEntries} \n${universityReportInstruction}`;
+   // const prompt = `Identify the top 10 NCAA Division 1 universities for a  ${gender?.label} ${sport?.label} player with the following profile: Athletic Stats: \n${statEntries} \n${universityReportInstruction}`;
 
-    try {
-      const response = await axios.post('https://api.openai.com/v1/chat/completions', {
-        model: 'gpt-4',
-        messages: [{ role: 'user', content: prompt }],
-      }, {
+   const universityReportInstruction = "Please include the names, emails, and contact details of the head coaches, along with a tailored sample outreach email for student-athletes. Ensure the email aligns with the sport and gender context provided, and emphasizes the athlete's suitability for the program.";
+
+  const prompt = `Based on the provided athletic profile, identify the top 10 NCAA Division 1 universities for a ${gender} ${sport} player. Include detailed responses focusing on academic and athletic reputation, team performance, and program fit. Athletic Stats:\n${statEntries}\n${universityReportInstruction}`;
+
+  try {
+    const response = await axios.post(
+      'https://api.openai.com/v1/chat/completions',
+      {
+        model: 'gpt-4-turbo',
+        temperature: 0.7, // Control randomness of responses
+        max_tokens: 1500, // Adjust for response length
+        messages: [
+          {
+            role: 'system',
+            content: `You are an expert in NCAA sports recruitment and university rankings. Your task is to provide comprehensive recommendations, including contact details of head coaches and a professional outreach email template. Ensure responses are concise, relevant, and actionable.`
+          },
+          {
+            role: 'assistant',
+            content: `Make sure to address NCAA Division 1 recruitment requirements comprehensively. Use precise and verifiable information to construct recommendations. Include outreach email templates tailored for student-athletes, keeping in mind sport and gender specificity.`
+          },
+          {
+            role: 'assistant',
+            content: `In cases where direct contact details are unavailable, provide resources or steps the user can take to find this information on official NCAA or university websites.`
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ]
+      },
+      {
         headers: {
-          'Authorization': ``,
+          'Authorization': ``
+,
           'Content-Type': 'application/json',
         },
-      });
-
+      }
+    );
+      
       const rawResponse = response.data.choices[0]?.message?.content || 'No valid response received.';
       setResponse(rawResponse);
     } catch (error) {
