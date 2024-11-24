@@ -1,42 +1,62 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import Select from "react-select";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { collection, addDoc } from "firebase/firestore"; // Import Firestore functions
+import { auth, db } from "../firebaseConfig"; // Ensure Firestore is initialized in firebaseConfig
+
+const countryOptions = [
+  { value: "United States", label: "United States" },
+  { value: "Canada", label: "Canada" },
+  { value: "United Kingdom", label: "United Kingdom" },
+  { value: "Australia", label: "Australia" },
+];
 
 const LoginRegister: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isRegistering, setIsRegistering] = useState(false); // Toggle between Login/Register
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [country, setCountry] = useState<{ value: string; label: string } | null>(null);
+  const [age, setAge] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const navigate = useNavigate(); // Navigate after login/registration
+  const navigate = useNavigate();
 
-  // Handle login
-  const handleLogin = async () => {
-    try {
-      setErrorMessage(null);
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log("User logged in successfully:", userCredential.user);
-      navigate("/");  // Redirect to Home after successful login
-    } catch (error: any) {
-      const message = mapFirebaseErrorToMessage(error.code);
-      setErrorMessage(message);
-    }
-  };
-
-  // Handle registration
   const handleRegister = async () => {
     try {
       setErrorMessage(null);
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      console.log("User registered successfully:", userCredential.user);
-      navigate("/");  // Redirect to Home after successful registration
+
+      if (isRegistering) {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        navigate("/");
+        const user = userCredential.user;
+        const createdAt = new Date().toISOString();
+
+        // Save user data to Firestore
+        await addDoc(collection(db, "users"), {
+          firstName,
+          lastName,
+          email,
+          country: country?.value || "",
+          age: parseInt(age, 10) || null,
+          createdAt,
+        });
+
+        console.log("User registered and data saved to Firestore");
+
+      } else {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        console.log("User logged in successfully:", userCredential.user);
+        navigate("/");
+      }
     } catch (error: any) {
+      console.error("Error:", error);
       const message = mapFirebaseErrorToMessage(error.code);
-      setErrorMessage(message);
+      setErrorMessage(message || "Failed to register. Please try again.");
     }
   };
 
-  // Function to map Firebase error codes to user-friendly messages
   const mapFirebaseErrorToMessage = (code: string): string => {
     switch (code) {
       case "auth/missing-password":
@@ -71,14 +91,42 @@ const LoginRegister: React.FC = () => {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <button onClick={isRegistering ? handleRegister : handleLogin}>
+      {isRegistering && (
+        <>
+          <input
+            type="text"
+            placeholder="First Name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Last Name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
+          />
+          <input
+            type="text"
+            placeholder="Age"
+            value={age}
+            onChange={(e) => setAge(e.target.value)}
+          />
+          <Select
+            options={countryOptions}
+            value={country}
+            onChange={(selected) => setCountry(selected)}
+            placeholder="Select or type country"
+            isClearable
+            isSearchable
+          />
+        </>
+      )}
+      <button onClick={handleRegister}>
         {isRegistering ? "Register" : "Login"}
       </button>
       {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
       <p onClick={() => setIsRegistering(!isRegistering)}>
-        {isRegistering
-          ? "Already have an account? Login"
-          : "Don't have an account? Register"}
+        {isRegistering ? "Already have an account? Login" : "Don't have an account? Register"}
       </p>
     </div>
   );

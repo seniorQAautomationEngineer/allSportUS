@@ -1,0 +1,12 @@
+mutation CreateUser {
+  user_insert(
+    data: {
+      id: "41111111-2222-3333-4444-555555555555", # Valid UUID format
+      firstName: "AL",
+      lastName: "La",
+      email: "3jj737@gmail.com",
+      country: "US",
+      createdAt: "2024-11-10T02:52:07Z"
+    }
+  )
+}

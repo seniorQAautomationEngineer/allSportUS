@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebaseConfig";
-import { NavLink } from "./NavLink";
+// import { NavLink } from "./NavLink";
 
 const navLinks = [
   { text: "About", width: "w-[50px]" },
@@ -23,9 +23,9 @@ export const Header: React.FC = () => {
     <header className="header-container">
       <div className="header-content">
         <nav className="nav-links">
-          {navLinks.map((link, index) => (
-            <NavLink key={index} {...link} />
-          ))}
+          {/* {navLinks.map((link, index) => (
+            // <NavLink key={index} {...link} />
+          ))} */}
         </nav>
 
         <div className="logo">

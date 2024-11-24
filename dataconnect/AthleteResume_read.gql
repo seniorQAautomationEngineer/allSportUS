@@ -1,0 +1,19 @@
+
+# # This is a file for you to write an un-named queries. 
+# # Only one un-named query is allowed per file.
+# query {
+#   athleteResumes{
+#     gender
+#     sport
+#     updatedAt
+#   }
+# }
+# # This is a file for you to write an un-named queries. 
+# # Only one un-named query is allowed per file.
+# query {
+#   athleteResumes{
+#     gender
+#     sport
+#     updatedAt
+#   }
+# }

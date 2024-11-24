@@ -1,0 +1,56 @@
+# CreateUserMutation.gql
+mutation CreateUser(
+  $id: UUID!,
+  $authUid: String!,
+  $firstName: String!, 
+  $lastName: String!, 
+  $email: String!, 
+  $country: String!, 
+  $age: Int,                      # New age parameter
+  $createdAt: Timestamp!
+) {
+  user_upsert(
+    data: {
+      id: $id,
+      authUid: $authUid,
+      firstName: $firstName,
+      lastName: $lastName,
+      email: $email,
+      country: $country,
+      age: $age,                 # Include age in data
+      createdAt: $createdAt
+    }
+  )
+}
+
+
+
+
+
+# mutation UpsertAthleteResume(
+#   $userId: User!
+#   $gender: String!
+#   $sport: String!
+#   $parameters: [String!]
+#   $updatedAt: Timestamp!
+# ) {
+#   athleteResume_upsert(
+#     data: {
+#       userId: $userId
+#       gender: $gender
+#       sport: $sport
+#       parameters: $parameters
+#       updatedAt: $updatedAt
+#     }
+#   )
+# }
+
+
+# mutation DeleteAthleteResume(
+#   $resumeId: UUID!
+# ) {
+#   athleteResume_delete(
+#     key: { id: $resumeId }
+#   )
+# }
+

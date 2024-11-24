@@ -1,0 +1,17 @@
+/* Loader.css */
+.loading-container, .loading-gif {
+    position: relative;
+    z-index: 1000; /* Brings the image to the front */
+  }
+  
+  
+/* CSS for troubleshooting */
+.loading-gif {
+    display: block;
+    width: 300px;
+    height: 300px;
+    opacity: 1; /* Ensure it’s fully visible */
+    z-index: 10; /* Ensure it’s not hidden behind other elements */
+  }
+  
+  

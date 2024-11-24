@@ -2,14 +2,18 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "jsx": "react",
+    "jsx": "react-jsx", // Ensure you're using React 17+ or later.
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".", // Points to the root of your project.
+    "paths": {
+      "@all-sports/*": ["src/dataconnect-generated/js/default-connector/*"]
+    }
   },
   "include": [
-    "src/**/*.tsx"
+    "src/**/*", "next-env.d.ts", "**/*.ts", "**/*.tsx" // Include all .ts, .tsx, and other files in src.
   ],
   "exclude": [
     "node_modules",
