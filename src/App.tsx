@@ -7,7 +7,9 @@ import LoginRegister from "./components/LoginRegister";  // Import combined Logi
 import LandingPage from "./components/LandingPage";
 import {ContactPage} from "./components/ContactFormData";
 import LoginFormData from "./components/LoginFormData";
+import CreateAccount from "./components/CreateAccount";
 import './index.css';
+import FAQPage from "./components/FaqPage";
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -29,7 +31,9 @@ const App: React.FC = () => {
         <Route path="/home" element={<LandingPage />} /> 
         <Route path="/contact" element={<ContactPage/>}/>
         <Route path="/login" element={<LoginFormData/>}/>
+        <Route path="/faq" element={<FAQPage/>}/>
         <Route path="/search" element={<Search />} /> 
+        <Route path="/sign-up" element={<CreateAccount />} /> 
       </Routes>
     </Router>
   );

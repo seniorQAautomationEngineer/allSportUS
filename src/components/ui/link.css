@@ -1,0 +1,14 @@
+.custom-link {
+    text-decoration: none;
+    color: #4A5568;
+    transition: color 0.2s ease-in-out;
+  }
+  
+  .custom-link:hover {
+    color: #2D3748;
+  }
+  
+  .custom-link.active {
+    color: #2B6CB0;
+    font-weight: 600;
+  }

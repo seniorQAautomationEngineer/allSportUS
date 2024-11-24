@@ -146,8 +146,7 @@ const Search: React.FC = () => {
       },
       {
         headers: {
-          'Authorization': ``
-,
+          'Authorization': ``,
           'Content-Type': 'application/json',
         },
       }

@@ -1,27 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Header from './ui/Header';
+import Footer from './ui/Footer';
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 rounded-full bg-[#4A90E2]"></div>
-            <span className="text-2xl font-bold text-[#333333]">AllSports.AI</span>
-          </div>
-          <nav className="hidden md:flex items-center space-x-6">
-            <a href="#" className="text-[#666666] hover:text-[#333333] transition-colors">About Us</a>
-            <a href="#" className="text-[#666666] hover:text-[#333333] transition-colors">FAQ</a>
-            <Link to="/contact" className="text-[#666666] hover:text-[#333333] transition-colors">Contact Us</Link>
-            <Link to="/login" className="text-[#666666] hover:text-[#333333] transition-colors">Login</Link>
-            <button className="px-4 py-2 rounded-full border border-[#4A90E2] text-[#4A90E2] hover:bg-[#4A90E2] hover:text-white transition-colors">
-              Sign Up
-            </button>
-          </nav>
-        </div>
-      </header>
+    <Header />
 
       <main>
         {/* Hero Section */}
@@ -173,46 +158,8 @@ export default function LandingPage() {
             </form>
           </div>
         </section>
-
-        {/* Footer */}
-        <footer className="max-w-7xl mx-auto px-4 py-12">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 rounded-full bg-[#4A90E2]"></div>
-                <span className="font-bold">AllSports.AI</span>
-              </div>
-              <p className="text-sm text-[#666666]">Proprietary process with data-driven insights for modern recruitment decisions.</p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Menu</h4>
-              <ul className="space-y-2 text-[#666666]">
-                <li><a href="#" className="hover:text-[#333333]">About Us</a></li>
-                <li><a href="#" className="hover:text-[#333333]">Contact</a></li>
-                <li><a href="#" className="hover:text-[#333333]">FAQ</a></li>
-                <li><a href="#" className="hover:text-[#333333]">Get Started</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Follow Us</h4>
-              <ul className="space-y-2 text-[#666666]">
-                <li><a href="#" className="hover:text-[#333333]">LinkedIn</a></li>
-                <li><a href="#" className="hover:text-[#333333]">Twitter</a></li>
-                <li><a href="#" className="hover:text-[#333333]">Instagram</a></li>
-                <li><a href="#" className="hover:text-[#333333]">Facebook</a></li>
-                <li><a href="#" className="hover:text-[#333333]">YouTube</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-200 mt-12 pt-8 text-sm text-[#666666] flex flex-wrap gap-4">
-            <a href="#" className="hover:text-[#333333]">Privacy Policy</a>
-            <span>|</span>
-            <a href="#" className="hover:text-[#333333]">Terms & Conditions</a>
-            <span>|</span>
-            <a href="#" className="hover:text-[#333333]">Cookie Policy</a>
-            <span className="ml-auto">© AllSports.AI 2024</span>
-          </div>
-        </footer>
+        <Footer />
+      
       </main>
     </div>
   )

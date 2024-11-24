@@ -1,0 +1,21 @@
+graph TD
+    A["GitHub Repository"] -->|"New Pull Request"| B["Jenkins PR Execution"]
+    B --> C["Run Tests"]
+    C --> D["Playwright E2E Tests"]
+    C --> E["Playwright Component Tests"]
+    C --> F["Jest Unit Tests"]
+    D --> G["Aggregate Test Results"]
+    E --> G
+    F --> G
+    G --> H["Report Results"]
+    H -->|"Update PR Status"| A
+    
+    classDef github fill:#f1e05a,stroke:#333,stroke-width:2px;
+    classDef jenkins fill:#335061,stroke:#333,stroke-width:2px,color:#fff;
+    classDef test fill:#3572A5,stroke:#333,stroke-width:2px,color:#fff;
+    classDef result fill:#2ecc71,stroke:#333,stroke-width:2px;
+    
+    class A github;
+    class B,C jenkins;
+    class D,E,F test;
+    class G,H result;
