@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { auth } from "./firebaseConfig";
-import Search from "./components/Search";
+import Search from "./components/SearchScreen";
 import LoginRegister from "./components/LoginRegister";  // Import combined Login/Register component
 import LandingPage from "./components/LandingPage";
 import {ContactPage} from "./components/ContactFormData";
 import LoginFormData from "./components/LoginFormData";
 import CreateAccount from "./components/CreateAccount";
+import AdditionalInfo from "./components/AdditionalInfo";
 import './index.css';
 import FAQPage from "./components/FaqPage";
 
@@ -34,6 +35,7 @@ const App: React.FC = () => {
         <Route path="/faq" element={<FAQPage/>}/>
         <Route path="/search" element={<Search />} /> 
         <Route path="/sign-up" element={<CreateAccount />} /> 
+        <Route path="/additional-info" element={<AdditionalInfo />} /> 
       </Routes>
     </Router>
   );
