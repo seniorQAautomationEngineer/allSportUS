@@ -56,7 +56,7 @@ const Header: React.FC = () => {
             {navLinks.map(
               (link) =>
                 link.condition &&
-                location.pathname !== link.path && (
+                location.pathname !== link.path && ( // Ensure only the current path is excluded
                   <Link
                     key={link.text}
                     to={link.path}

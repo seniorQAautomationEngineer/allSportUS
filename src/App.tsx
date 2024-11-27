@@ -11,6 +11,7 @@ import CreateAccount from "./components/CreateAccount";
 import AdditionalInfo from "./components/AdditionalInfo";
 import AboutUs from "./components/AboutUs";
 import FAQPage from "./components/FaqPage";
+import UserProfile from "./components/UserProfile";
 import "./index.css";
 import "./components/styles/markdown.css";
 
@@ -47,13 +48,14 @@ const App: React.FC = () => {
         <Route path="/" element={<HomeRoute />} />
 
         {/* Public Routes */}
-        <Route path="/home" element={<LandingPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/login" element={<LoginFormData />} />
-        <Route path="/faq" element={<FAQPage />} />
-        <Route path="/signup" element={<CreateAccount />} />
-        <Route path="/additional-info" element={<AdditionalInfo />} />
-        <Route path="/about" element={<AboutUs />} />
+        <Route path="/home" element={<LandingPage/>} />
+        <Route path="/contact" element={<ContactPage/>} />
+        <Route path="/login" element={<LoginFormData/>} />
+        <Route path="/faq" element={<FAQPage/>} />
+        <Route path="/signup" element={<CreateAccount/>} />
+        <Route path="/additional-info" element={<AdditionalInfo/>} />
+        <Route path="/about" element={<AboutUs/>} />
+        <Route path="/profile" element={<UserProfile/>} />
 
         {/* Private Routes */}
         <Route
