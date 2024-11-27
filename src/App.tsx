@@ -9,6 +9,7 @@ import { ContactPage } from "./components/ContactFormData";
 import LoginFormData from "./components/LoginFormData";
 import CreateAccount from "./components/CreateAccount";
 import AdditionalInfo from "./components/AdditionalInfo";
+import AboutUs from "./components/AboutUs";
 import FAQPage from "./components/FaqPage";
 import "./index.css";
 import "./components/styles/markdown.css";
@@ -52,6 +53,7 @@ const App: React.FC = () => {
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/signup" element={<CreateAccount />} />
         <Route path="/additional-info" element={<AdditionalInfo />} />
+        <Route path="/about" element={<AboutUs />} />
 
         {/* Private Routes */}
         <Route
