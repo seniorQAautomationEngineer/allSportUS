@@ -3,30 +3,19 @@ import Header from './ui/Header';
 import Footer from './ui/Footer';
 import sportConfigs from "./configs/sportConfigs";
 import Loader from "./loader/Loader";
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-
-
-// Mock function for Firebase Firestore
-const addDoc = async (collection: any, data: any) => {
-  console.log("Saving resume:", data);
-  // In a real app, this would save to Firestore
-  return Promise.resolve();
-};
-
-// Mock function for OpenAI API call
-const callOpenAI = async (prompt: string) => {
-  // In a real app, this would call the OpenAI API
-  await new Promise(resolve => setTimeout(resolve, 3000));
-  return `Mock response for ${prompt}`;
-};
+import axios from 'axios';
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
+import remarkGfm from "remark-gfm";
+import ReactMarkdown from "react-markdown";;
 
 export default function SearchScreen() {
   const [gender, setGender] = useState("");
   const [sport, setSport] = useState("");
   const [parameters, setParameters] = useState<string[]>([]);
-  const [statistics, setStatistics] = useState<{[key: string]: string}>({});
-  const [response, setResponse] = useState("");
+  const [statistics, setStatistics] = useState<{ [key: string]: string }>({});
+  const [response, setResponse] = useState<string | null>(null);
+  const [parsedResponse, setParsedResponse] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
@@ -42,30 +31,67 @@ export default function SearchScreen() {
     }
   }, [sport]);
 
+
   const handleSearch = async () => {
-    const isAnyParameterFilled = Object.values(statistics).some(value => value.trim() !== '');
-    
+    const isAnyParameterFilled = Object.values(statistics).some(value => value.trim() !== '' && !isNaN(Number(value)));
+
     if (!isAnyParameterFilled) {
-      setToast({ show: true, message: "Please fill in at least one parameter.", type: "error" });
+      setToast({ show: true, message: "Please fill in at least one parameter with valid numeric data.", type: "error" });
       setTimeout(() => setToast({ show: false, message: "", type: "success" }), 3000);
       return;
     }
 
     setIsSearching(true);
-    setResponse("");
+    setResponse(null);
+    setParsedResponse([]);
 
     const statEntries = parameters
       .map((param) => `${param}: ${statistics[param] || "N/A"}`)
       .join(', ');
 
-    const prompt = `Based on the provided athletic profile, identify the top 10 NCAA Division 1 universities for a ${gender} ${sport} player. Include detailed responses focusing on academic and athletic reputation, team performance, and program fit. Athletic Stats:\n${statEntries}\nPlease include the names, emails, and contact details of the head coaches, along with a tailored sample outreach email for student-athletes. Ensure the email aligns with the sport and gender context provided, and emphasizes the athlete's suitability for the program.`;
+ 
+      const universityReportInstruction = "Please include the names, emails, and contact details of the head coaches. Ensure the email aligns with the sport and gender context provided, and emphasizes the athlete's suitability for the program.";
 
+      const prompt = `Based on the provided athletic profile, identify the top 20 NCAA Division 1 universities for a ${gender} ${sport} player. Include detailed responses focusing on academic and athletic reputation, team performance, and program fit. Athletic Stats:\n${statEntries}\n${universityReportInstruction}`;
     try {
-      const result = await callOpenAI(prompt);
+      const apiResponse = await axios.post(
+        "https://api.openai.com/v1/chat/completions",
+        {
+          model: "gpt-4-turbo",
+          temperature: 0.7,
+          max_tokens: 1500,
+          messages: [
+            {
+              role: 'system',
+              content: `You are an expert in NCAA sports recruitment and university rankings. Your task is to provide comprehensive recommendations, including contact details of head coaches. Ensure responses are concise, relevant, and actionable.`
+            },
+            {
+              role: 'assistant',
+              content: `Make sure to address NCAA Division 1 recruitment requirements comprehensively. Use precise and verifiable information to construct recommendations, keeping in mind sport and gender specificity.`
+            },
+            {
+              role: 'assistant',
+              content: `In cases where direct contact details are unavailable, provide resources or steps the user can take to find this information on official NCAA or university websites.`
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+        },
+        {
+          headers: {
+            Authorization: ``,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const result = apiResponse.data.choices[0]?.message?.content || "No valid response.";
       setResponse(result);
     } catch (error) {
-      console.error('Error fetching data:', error);
-      setResponse('Error fetching data. Please try again later.');
+      console.error("Error fetching data:", error);
+      setResponse("Error fetching data. Please try again later.");
     } finally {
       setIsSearching(false);
     }
@@ -91,12 +117,9 @@ export default function SearchScreen() {
         sport,
         parameters: statistics,
         createdAt: new Date().toISOString(),
-        firstName: "John",
-        lastName: "Doe",
-        email: "john.doe@example.com",
       };
 
-      await addDoc(null, resumeData);
+      await addDoc(collection(db, "resumes"), resumeData);
 
       setToast({ show: true, message: "Resume saved successfully!", type: "success" });
       setTimeout(() => setToast({ show: false, message: "", type: "success" }), 3000);
@@ -111,7 +134,7 @@ export default function SearchScreen() {
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 bg-gray-100 py-8">
-        <div className="container mx-auto px-4 max-w-2xl">
+        <div className="container mx-auto px-4 max-w-4xl"> {/* Increased max-width for table */}
           <div className="bg-white shadow-md rounded-lg p-6">
             <h2 className="text-2xl font-bold mb-6">College Scholarship Finder</h2>
             <div className="space-y-4">
@@ -199,9 +222,30 @@ export default function SearchScreen() {
               )}
               
               {!isSearching && response && (
-                <div className="markdown-content mt-6">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{response}</ReactMarkdown>
-                </div>
+               <div className="markdown-content mt-6 space-y-6">
+               <ReactMarkdown 
+                 remarkPlugins={[remarkGfm]}
+                 components={{
+                   h1: ({ node, ...props }) => (
+                     <h2 className="text-2xl font-bold text-gray-900 mt-8 mb-4" {...props} />
+                   ),
+                   h2: ({ node, ...props }) => (
+                     <h3 className="text-xl font-semibold text-gray-900 mt-6 mb-2" {...props} />
+                   ),
+                   p: ({ node, ...props }) => (
+                     <p className="text-base leading-relaxed mb-2" {...props} />
+                   ),
+                   a: ({ node, ...props }) => (
+                     <a className="text-blue-600 hover:text-blue-800 hover:underline" {...props} />
+                   ),
+                   strong: ({ node, ...props }) => (
+                     <strong className="font-semibold text-gray-900" {...props} />
+                   ),
+                 }}
+               >
+                 {response}
+               </ReactMarkdown>
+             </div>
               )}
             </div>
           </div>
@@ -218,4 +262,3 @@ export default function SearchScreen() {
     </div>
   );
 }
-

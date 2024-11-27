@@ -11,6 +11,7 @@ import CreateAccount from "./components/CreateAccount";
 import AdditionalInfo from "./components/AdditionalInfo";
 import './index.css';
 import FAQPage from "./components/FaqPage";
+import './components/styles/markdown.css';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
