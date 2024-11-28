@@ -14,6 +14,7 @@ import FAQPage from "./components/FaqPage";
 import UserProfile from "./components/UserProfile";
 import "./index.css";
 import "./components/styles/markdown.css";
+import './components/styles/react-select.css';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);

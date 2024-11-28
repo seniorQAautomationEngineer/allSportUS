@@ -1,0 +1,73 @@
+/* Base input styles to match across all types */
+input[type="text"],
+input[type="number"],
+.react-select-container .react-select__control {
+  height: 42px;            /* Consistent height for all inputs */
+  border-radius: 0.75rem;
+  border-color: #d1d5db;
+  background-color: white;
+  font-size: 0.875rem;    /* Consistent font size */
+}
+
+/* Number input specific styles to remove spinner */
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* React Select specific styles */
+.react-select-container .react-select__control {
+  min-height: unset;      /* Override default min-height */
+  padding: 0;             /* Remove padding to match other inputs */
+}
+
+.react-select-container .react-select__value-container {
+  height: 40px;           /* Match input height accounting for borders */
+  padding: 0 8px;
+}
+
+.react-select-container .react-select__input-container {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.react-select-container .react-select__placeholder {
+  color: #94a3b8;
+}
+
+.react-select-container .react-select__menu {
+  margin-top: 4px;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.react-select-container .react-select__option {
+  padding: 8px 12px;
+  font-size: 0.875rem;
+}
+
+/* Hover and focus states */
+.react-select-container .react-select__control:hover {
+  border-color: #9ca3af;
+}
+
+.react-select-container .react-select__control--is-focused {
+  border-color: #6b7280;
+  box-shadow: 0 0 0 1px #6b7280;
+}
+
+.react-select-container .react-select__option--is-focused {
+  background-color: #f3f4f6;
+}
+
+.react-select-container .react-select__option--is-selected {
+  background-color: #e5e7eb;
+  color: #111827;
+}
+

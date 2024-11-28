@@ -5,14 +5,15 @@ import { collection, addDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig"; // Firestore configuration
 import Header from "./ui/Header";
 import Footer from "./ui/Footer";
+import allCountries from "src/data/AllCountries";
 
-const countryOptions = [
-  { value: "United States", label: "United States" },
-  { value: "Canada", label: "Canada" },
-  { value: "United Kingdom", label: "United Kingdom" },
-  { value: "Australia", label: "Australia" },
-  { value: "India", label: "India" },
-];
+// const countryOptions = [
+//   { value: "United States", label: "United States" },
+//   { value: "Canada", label: "Canada" },
+//   { value: "United Kingdom", label: "United Kingdom" },
+//   { value: "Australia", label: "Australia" },
+//   { value: "India", label: "India" },
+// ];
 
 const AdditionalInfo: React.FC = () => {
   const [firstName, setFirstName] = useState("");
@@ -123,13 +124,12 @@ const AdditionalInfo: React.FC = () => {
             </label>
             <Select
               id="country"
-              options={countryOptions}
-              value={country}
-              onChange={(selected) => setCountry(selected)}
-              placeholder="Select your country"
+              className="react-select-container mt-2"
+              classNamePrefix="react-select"
+              options={allCountries}
+              placeholder="Select a country"
               isClearable
               isSearchable
-              className="mt-2"
             />
           </div>
 

@@ -170,7 +170,7 @@ export default function UserProfile() {
                           <span className="font-medium text-gray-700">Event {index + 1}</span>
                           {isEditingAthlete ? (
                             <input
-                              type="text"
+                              type="number"
                               className="w-1/2 p-1 bg-gray-50 border border-gray-300 rounded-md"
                               value={event.event}
                               onChange={(e) => {
@@ -337,9 +337,6 @@ export default function UserProfile() {
                       Save changes
                     </button>
                   )}
-                  {toast.show && (
-                    <Toast message={toast.message} type={toast.type} />
-                  )}
                 </div>
 
                 {/* Password Section */}
@@ -395,9 +392,6 @@ export default function UserProfile() {
                       </div>
                     </>
                   )}
-                  {toast.show && (
-                    <Toast message={toast.message} type={toast.type} />
-                  )}
                 </div>
 
                 {/* Delete Account */}
@@ -408,9 +402,6 @@ export default function UserProfile() {
                   >
                     Delete Account
                   </button>
-                  {toast.show && (
-                    <Toast message={toast.message} type={toast.type} />
-                  )}
                 </div>
               </div>
             </div>
@@ -418,6 +409,9 @@ export default function UserProfile() {
         </div>
       </main>
       <Footer />
+      {toast.show && (
+        <Toast message={toast.message} type={toast.type} />
+      )}
     </div>
   );
 }
