@@ -1,16 +1,6 @@
-"use client"
-
-import React, { useState, useEffect } from 'react';
-import Header from './ui/Header';
-import Footer from './ui/Footer';
-import { Edit2, Save, X } from 'lucide-react';
-import Toast from './ui/toast';
-
-
-interface AthleteEvent {
-  event: string;
-  time: string;
-}
+import React, { useState } from 'react';
+import Header from "./ui/Header";
+import Footer from "./ui/Footer";
 
 interface UserData {
   firstName: string;
@@ -19,386 +9,153 @@ interface UserData {
   gender: string;
   age: number;
   country: string;
-  sport: string;
-  events: AthleteEvent[];
 }
 
-interface ToastState {
-  show: boolean;
-  message: string;
-  type: "success" | "error";
-}
-
-const countries = [
-  "United States", "Canada", "United Kingdom", "Australia", "Germany",
-  "France", "Spain", "Italy", "Japan", "China", "Brazil", "Mexico",
-  "Argentina", "India", "Russia", "South Africa", "Egypt", "Nigeria",
-  "Kenya", "Saudi Arabia", "United Arab Emirates", "Singapore", "South Korea"
-];
-
-const genders = ["Male", "Female", "Other"];
-
-export default function UserProfile() {
+const UserProfile: React.FC = () => {
   const [userData, setUserData] = useState<UserData>({
     firstName: "Pepito Rodrick",
     lastName: "Coronel Sifuentes",
     email: "pepito.c.sifuentes@uni.pe",
     gender: "Male",
     age: 20,
-    country: "Peru",
-    sport: "Swimming",
-    events: [
-      { event: "50 freestyle", time: "27.56" },
-      { event: "100 freestyle", time: "59.23" },
-      { event: "200 freestyle", time: "2:08.45" }
-    ]
+    country: "Peru"
   });
 
-  const [passwords, setPasswords] = useState({
-    current: "",
-    new: "",
-    confirmNew: ""
-  });
-
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [isEditingAthlete, setIsEditingAthlete] = useState(false);
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
-  const [editedUserData, setEditedUserData] = useState<UserData>(userData);
-  const [toast, setToast] = useState<ToastState>({ show: false, message: "", type: "success" });
-
-  const showToast = (message: string, type: "success" | "error") => {
-    setToast({ show: true, message, type });
-    setTimeout(() => setToast({ show: false, message: "", type: "success" }), 3000);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setUserData(prevData => ({
+      ...prevData,
+      [name]: name === 'age' ? parseInt(value, 10) : value
+    }));
   };
 
   const handleSaveChanges = () => {
-    setUserData(editedUserData);
-    setIsEditingProfile(false);
-    showToast("Profile updated successfully!", "success");
-    console.log("Saving changes:", editedUserData);
+    // Add save logic here
+    console.log("User data saved:", userData);
   };
 
-  const handleSaveAthleteChanges = () => {
-    setUserData(editedUserData);
-    setIsEditingAthlete(false);
-    showToast("Athletic profile updated successfully!", "success");
-    console.log("Saving athlete changes:", editedUserData);
-  };
-
-  const handlePasswordChange = () => {
-    if (passwords.new !== passwords.confirmNew) {
-      showToast("New passwords do not match", "error");
-      return;
-    }
-    console.log("Changing password:", passwords);
-    showToast("Password updated successfully!", "success");
-    setIsChangingPassword(false);
-    setPasswords({ current: "", new: "", confirmNew: "" });
+  const handleSignOut = () => {
+    // Add sign out logic here
+    console.log("User signed out");
   };
 
   const handleDeleteAccount = () => {
-    if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      console.log("Deleting account");
-      showToast("Account deleted successfully", "success");
-    }
+    // Add delete account logic here
+    console.log("Account deleted");
   };
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow bg-gray-100 py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white shadow-xl rounded-lg overflow-hidden">
-            <div className="p-6 sm:p-10 flex flex-col md:flex-row gap-8">
-              {/* Left Column - Profile and Athletic Info */}
-              <div className="w-full md:w-1/3 space-y-6">
-                {/* Profile Card */}
-                <div className="bg-gray-50 rounded-lg p-6 shadow-sm">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center">
-                      <span className="text-2xl text-white">
-                        {userData.firstName.charAt(0)}
-                      </span>
-                    </div>
-                    <div>
-                      <h2 className="text-lg font-semibold text-gray-900">{`${userData.firstName} ${userData.lastName}`}</h2>
-                      <p className="text-gray-500 text-sm">{userData.email}</p>
-                    </div>
+      <main className="flex-grow bg-gray-100 py-12">
+        <div className="container mx-auto px-4">
+          <div className="max-w-3xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+            <div className="p-8">
+              <h2 className="text-2xl font-bold mb-6">User Profile</h2>
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      value={userData.firstName}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      value={userData.lastName}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
                   </div>
                 </div>
-
-                {/* Athletic Profile */}
-                <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                  <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-lg font-semibold text-gray-900">Athletic Profile</h2>
-                    {isEditingAthlete ? (
-                      <button
-                        onClick={handleSaveAthleteChanges}
-                        className="flex items-center space-x-1 text-white bg-green-500 px-3 py-1 rounded-md hover:bg-green-600 transition duration-150 ease-in-out"
-                      >
-                        <Save className="w-4 h-4" />
-                        <span>Save</span>
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => setIsEditingAthlete(true)}
-                        className="flex items-center space-x-1 text-white bg-blue-500 px-3 py-1 rounded-md hover:bg-blue-600 transition duration-150 ease-in-out"
-                      >
-                        <Edit2 className="w-4 h-4" />
-                        <span>Edit</span>
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex justify-between">
-                      <span className="font-medium text-gray-700">Sport</span>
-                      {isEditingAthlete ? (
-                        <input
-                          type="text"
-                          className="w-1/2 p-1 bg-gray-50 border border-gray-300 rounded-md"
-                          value={editedUserData.sport}
-                          onChange={(e) => setEditedUserData({ ...editedUserData, sport: e.target.value })}
-                        />
-                      ) : (
-                        <span className="text-gray-900">{userData.sport}</span>
-                      )}
-                    </div>
-                    {editedUserData.events.map((event, index) => (
-                      <React.Fragment key={index}>
-                        <div className="flex justify-between">
-                          <span className="font-medium text-gray-700">Event {index + 1}</span>
-                          {isEditingAthlete ? (
-                            <input
-                              type="number"
-                              className="w-1/2 p-1 bg-gray-50 border border-gray-300 rounded-md"
-                              value={event.event}
-                              onChange={(e) => {
-                                const newEvents = [...editedUserData.events];
-                                newEvents[index].event = e.target.value;
-                                setEditedUserData({ ...editedUserData, events: newEvents });
-                              }}
-                            />
-                          ) : (
-                            <span className="text-gray-900">{event.event}</span>
-                          )}
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="font-medium text-gray-700">Time</span>
-                          {isEditingAthlete ? (
-                            <input
-                              type="number"
-                              step="0.01"
-                              className="w-1/2 p-1 bg-gray-50 border border-gray-300 rounded-md"
-                              value={event.time}
-                              onChange={(e) => {
-                                const newEvents = [...editedUserData.events];
-                                newEvents[index].time = e.target.value;
-                                setEditedUserData({ ...editedUserData, events: newEvents });
-                              }}
-                            />
-                          ) : (
-                            <span className="text-gray-900">{event.time}</span>
-                          )}
-                        </div>
-                      </React.Fragment>
-                    ))}
-                  </div>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={userData.email}
+                    onChange={handleInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                  />
                 </div>
-              </div>
-
-              {/* Right Column - User Settings */}
-              <div className="w-full md:w-2/3 bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                <div className="flex justify-between items-center mb-6">
-                  <h2 className="text-xl font-semibold text-gray-900">User Settings</h2>
-                  {isEditingProfile ? (
-                    <button
-                      onClick={handleSaveChanges}
-                      className="flex items-center space-x-1 text-white bg-green-500 px-3 py-1 rounded-md hover:bg-green-600 transition duration-150 ease-in-out"
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <div>
+                    <label htmlFor="gender" className="block text-sm font-medium text-gray-700 mb-1">
+                      Gender
+                    </label>
+                    <select
+                      id="gender"
+                      name="gender"
+                      value={userData.gender}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                     >
-                      <Save className="w-4 h-4" />
-                      <span>Save</span>
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setIsEditingProfile(true)}
-                      className="flex items-center space-x-1 text-white bg-blue-500 px-3 py-1 rounded-md hover:bg-blue-600 transition duration-150 ease-in-out"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                      <span>Edit</span>
-                    </button>
-                  )}
-                </div>
-
-                {/* Details Section */}
-                <div className="space-y-6">
-                  <h3 className="text-lg font-medium text-gray-900">Details</h3>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        First Name
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full p-2 bg-gray-50 border border-gray-300 rounded-md"
-                        value={editedUserData.firstName}
-                        onChange={(e) => setEditedUserData({ ...editedUserData, firstName: e.target.value })}
-                        placeholder="Enter your first name"
-                        disabled={!isEditingProfile}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Last Name
-                      </label>
-                      <input
-                        type="text"
-                        className="w-full p-2 bg-gray-50 border border-gray-300 rounded-md"
-                        value={editedUserData.lastName}
-                        onChange={(e) => setEditedUserData({ ...editedUserData, lastName: e.target.value })}
-                        placeholder="Enter your last name"
-                        disabled={!isEditingProfile}
-                      />
-                    </div>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
                   </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        className="w-full p-2 bg-gray-50 border border-gray-300 rounded-md"
-                        value={editedUserData.email}
-                        onChange={(e) => setEditedUserData({ ...editedUserData, email: e.target.value })}
-                        placeholder="Enter your email"
-                        disabled={!isEditingProfile}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Gender
-                      </label>
-                      <select
-                        className="w-full p-2 bg-gray-50 border border-gray-300 rounded-md"
-                        value={editedUserData.gender}
-                        onChange={(e) => setEditedUserData({ ...editedUserData, gender: e.target.value })}
-                        disabled={!isEditingProfile}
-                      >
-                        {genders.map((gender) => (
-                          <option key={gender} value={gender}>
-                            {gender}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                  <div>
+                    <label htmlFor="age" className="block text-sm font-medium text-gray-700 mb-1">
+                      Age
+                    </label>
+                    <input
+                      type="number"
+                      id="age"
+                      name="age"
+                      value={userData.age}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
                   </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Age
-                      </label>
-                      <input
-                        type="number"
-                        className="w-full p-2 bg-gray-50 border border-gray-300 rounded-md"
-                        value={editedUserData.age}
-                        onChange={(e) => setEditedUserData({ ...editedUserData, age: parseInt(e.target.value) })}
-                        placeholder="Enter your age"
-                        disabled={!isEditingProfile}
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Country
-                      </label>
-                      <select
-                        className="w-full p-2 bg-gray-50 border border-gray-300 rounded-md"
-                        value={editedUserData.country}
-                        onChange={(e) => setEditedUserData({ ...editedUserData, country: e.target.value })}
-                        disabled={!isEditingProfile}
-                      >
-                        {countries.map((country) => (
-                          <option key={country} value={country}>
-                            {country}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                  <div>
+                    <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-1">
+                      Country
+                    </label>
+                    <input
+                      type="text"
+                      id="country"
+                      name="country"
+                      value={userData.country}
+                      onChange={handleInputChange}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
                   </div>
-
-                  {isEditingProfile && (
-                    <button
-                      onClick={handleSaveChanges}
-                      className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-150 ease-in-out"
-                    >
-                      Save changes
-                    </button>
-                  )}
                 </div>
-
-                {/* Password Section */}
-                <div className="mt-8 space-y-6">
-                  <h3 className="text-lg font-medium text-gray-900">Password</h3>
-                  {!isChangingPassword ? (
-                    <button
-                      onClick={() => setIsChangingPassword(true)}
-                      className="text-blue-500 hover:text-blue-700"
-                    >
-                      Change password
-                    </button>
-                  ) : (
-                    <>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <input
-                          type="password"
-                          className="w-full p-2 bg-gray-50 border border-gray-300 rounded-md"
-                          value={passwords.current}
-                          onChange={(e) => setPasswords({ ...passwords, current: e.target.value })}
-                          placeholder="Current password"
-                        />
-                        <div></div>
-                        <input
-                          type="password"
-                          className="w-full p-2 bg-gray-50 border border-gray-300 rounded-md"
-                          value={passwords.new}
-                          onChange={(e) => setPasswords({ ...passwords, new: e.target.value })}
-                          placeholder="New password"
-                        />
-                        <input
-                          type="password"
-                          className="w-full p-2 bg-gray-50 border border-gray-300 rounded-md"
-                          value={passwords.confirmNew}
-                          onChange={(e) => setPasswords({ ...passwords, confirmNew: e.target.value })}
-                          placeholder="Confirm new password"
-                        />
-                      </div>
-
-                      <div className="flex items-center justify-between">
-                        <button
-                          onClick={handlePasswordChange}
-                          className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-150 ease-in-out"
-                        >
-                          Save changes
-                        </button>
-                        <button
-                          onClick={() => setIsChangingPassword(false)}
-                          className="text-gray-500 hover:text-gray-700"
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </>
-                  )}
+                <div className="flex justify-between items-center">
+                  <button
+                    onClick={handleSaveChanges}
+                    className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  >
+                    Save Changes
+                  </button>
+                  <button
+                    onClick={handleSignOut}
+                    className="text-gray-600 hover:text-gray-800 font-medium"
+                  >
+                    Sign Out
+                  </button>
                 </div>
-
-                {/* Delete Account */}
-                <div className="mt-8 pt-6 border-t border-gray-200">
+                <div className="pt-6 border-t border-gray-200">
                   <button
                     onClick={handleDeleteAccount}
-                    className="text-red-500 hover:text-red-700"
+                    className="text-red-600 hover:text-red-800 font-medium"
                   >
                     Delete Account
                   </button>
@@ -409,10 +166,9 @@ export default function UserProfile() {
         </div>
       </main>
       <Footer />
-      {toast.show && (
-        <Toast message={toast.message} type={toast.type} />
-      )}
     </div>
   );
-}
+};
+
+export default UserProfile;
 
