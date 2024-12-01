@@ -7,14 +7,6 @@ import Header from "./ui/Header";
 import Footer from "./ui/Footer";
 import allCountries from "src/data/AllCountries";
 
-// const countryOptions = [
-//   { value: "United States", label: "United States" },
-//   { value: "Canada", label: "Canada" },
-//   { value: "United Kingdom", label: "United Kingdom" },
-//   { value: "Australia", label: "Australia" },
-//   { value: "India", label: "India" },
-// ];
-
 const AdditionalInfo: React.FC = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -130,6 +122,8 @@ const AdditionalInfo: React.FC = () => {
               placeholder="Select a country"
               isClearable
               isSearchable
+              value={country} // Bind the current selected value
+              onChange={(selectedOption) => setCountry(selectedOption)} // Update state on change
             />
           </div>
 
