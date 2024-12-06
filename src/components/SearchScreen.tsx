@@ -22,8 +22,14 @@ export default function SearchScreen() {
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
 
   const sportsOptions = {
-    male: maleSports.map((sport) => ({ value: sport.toLowerCase(), label: sport })),
-    female: femaleSports.map((sport) => ({ value: sport.toLowerCase(), label: sport })),
+    male: maleSports.map((sport) => ({
+      value: sport.name.toLowerCase(),
+      label: `${sport.emoji} ${sport.name}`,
+    })),
+    female: femaleSports.map((sport) => ({
+      value: sport.name.toLowerCase(),
+      label: `${sport.emoji} ${sport.name}`,
+    })),
   };
 
   useEffect(() => {
