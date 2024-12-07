@@ -95,7 +95,7 @@
 //               </Card>
 //             )}
 //             {searchResults && (
-//               <SearchResults results={searchResults} />
+//               // <SearchResults results={searchResults} />
 //             )}
 //           </motion.div>
 //         )}

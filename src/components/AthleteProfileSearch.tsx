@@ -2,7 +2,7 @@
 // import Header from "./ui/Header";
 // import Footer from "./ui/Footer";
 // import { AthleteProfileForm } from "./athlete-profile-form";
-// import { AthleteProfileCard } from "./athlete-profile-card";
+// // import { AthleteProfileCard } from "./athlete-profile-card";
 // import { SearchResults } from "./search-results";
 // import Select from "react-select";
 // import { AnimatePresence, motion } from "framer-motion";
