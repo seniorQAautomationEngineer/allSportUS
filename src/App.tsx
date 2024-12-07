@@ -11,9 +11,9 @@ import CreateAccount from "./components/CreateAccount";
 import AdditionalInfo from "./components/AdditionalInfo";
 import AboutUs from "./components/AboutUs";
 import FAQPage from "./components/FaqPage";
-import UserProfile from "./components/UserProfile";
-import { AthleteProfile } from "./components/athlete-profile";
-import AthleteProfileSearch from './components/AthleteProfileSearch';
+import UserProfile from "./components/UserProfile";;
+// import AthleteProfileSearch from './components/AthleteProfileSearch';
+import { AthleteProfileForm } from "./components/athlete-profile-form";
 import "./index.css";
 import "./components/styles/markdown.css";
 import './components/styles/react-select.css';
@@ -21,6 +21,11 @@ import './components/styles/react-select.css';
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const handleSave = (data: any) => {
+    console.log('Saved data:', data);
+    // Here you would typically send this data to a server or update app state
+  };
 
   // Monitor Firebase Authentication state changes
   useEffect(() => {
@@ -65,7 +70,7 @@ const App: React.FC = () => {
           path="/search"
           element={
             <PrivateRoute>
-              <AthleteProfileSearch name="" />
+              <AthleteProfileForm onSave={handleSave} initialData={{}} />
             </PrivateRoute>
           }
         />
