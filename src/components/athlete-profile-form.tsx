@@ -6,22 +6,25 @@ import { Label } from './ui/label';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Card, CardContent } from './ui/card';
 import Select from 'react-select';
-import sportConfigs, { SportConfig, SportParameter } from '../data/sportConfigs';
+import sportConfigs, { SportParameter } from '../data/sportConfigs';
+import femaleSports from '../data/FemaleSports';
+import maleSports from '../data/MaleSports';
 
 interface AthleteProfileFormProps {
   onSave: (data: any) => void;
   initialData?: any;
 }
 
-interface SportOption {
-  value: string;
-  label: string;
-}
-
-const sportsOptions: SportOption[] = Object.entries(sportConfigs).map(([key, value]) => ({
-  value: key,
-  label: value.name,
-}));
+const sportsOptions = {
+  male: maleSports.map((sport) => ({
+    value: sport.name.toLowerCase(),
+    label: `${sport.emoji} ${sport.name}`,
+  })),
+  female: femaleSports.map((sport) => ({
+    value: sport.name.toLowerCase(),
+    label: `${sport.emoji} ${sport.name}`,
+  })),
+};
 
 const customSelectStyles = {
   control: (base: any) => ({
@@ -35,39 +38,14 @@ const customSelectStyles = {
       borderColor: '#cbd5e1',
     },
   }),
-  valueContainer: (base: any) => ({
-    ...base,
-    padding: '0 8px',
-  }),
-  input: (base: any) => ({
-    ...base,
-    margin: 0,
-    padding: 0,
-  }),
-  option: (base: any, state: any) => ({
-    ...base,
-    padding: '6px 8px',
-    backgroundColor: state.isSelected ? '#4285F4' : state.isFocused ? '#f8fafc' : 'white',
-    fontSize: '0.875rem',
-  }),
-  menu: (base: any) => ({
-    ...base,
-    marginTop: '2px',
-    borderRadius: '0.375rem',
-    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
-  }),
-  placeholder: (base: any) => ({
-    ...base,
-    fontSize: '0.875rem',
-  }),
-  singleValue: (base: any) => ({
-    ...base,
-    fontSize: '0.875rem',
-  }),
 };
 
 export function AthleteProfileForm({ onSave, initialData = {} }: AthleteProfileFormProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    gender: 'male' | 'female' | '';
+    sport: string;
+    additionalData: Record<string, any>;
+  }>({
     gender: initialData.gender || '',
     sport: initialData.sport || '',
     additionalData: initialData.additionalData || {},
@@ -154,16 +132,13 @@ export function AthleteProfileForm({ onSave, initialData = {} }: AthleteProfileF
       </div>
       <CardContent className="p-4">
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Gender Selection */}
           <div className="space-y-4">
+            {/* Gender Selection */}
             <div>
               <h2 className="text-base font-semibold mb-1">Gender</h2>
-              <p className="text-sm text-gray-600 mb-2">
-                Select your gender for appropriate team placement
-              </p>
               <RadioGroup
                 value={formData.gender}
-                onValueChange={(value) => setFormData({ ...formData, gender: value })}
+                onValueChange={(value) => setFormData({ ...formData, gender: value as 'male' | 'female' })}
                 className="flex gap-4"
               >
                 <div className="flex items-center">
@@ -181,14 +156,11 @@ export function AthleteProfileForm({ onSave, initialData = {} }: AthleteProfileF
             {formData.gender && (
               <div>
                 <h2 className="text-base font-semibold mb-1">Select Sport</h2>
-                <p className="text-sm text-gray-600 mb-2">
-                  Choose the sport you participate in
-                </p>
                 <Select
-                  options={sportsOptions}
+                  options={sportsOptions[formData.gender]}
                   value={
                     formData.sport
-                      ? { value: formData.sport, label: sportConfigs[formData.sport].name }
+                      ? { value: formData.sport, label: sportsOptions[formData.gender].find((s) => s.value === formData.sport)?.label || '' }
                       : null
                   }
                   onChange={(option) =>
@@ -202,7 +174,7 @@ export function AthleteProfileForm({ onSave, initialData = {} }: AthleteProfileF
 
             {/* Sport-Specific Fields */}
             {formData.sport &&
-              sportConfigs[formData.sport].fields.map(renderField)}
+              sportConfigs[formData.sport]?.fields.map(renderField)}
           </div>
 
           {/* Save Button */}
