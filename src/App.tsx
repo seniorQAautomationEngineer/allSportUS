@@ -16,7 +16,7 @@ import AdditionalInfo from "./components/AdditionalInfo";
 import AboutUs from "./components/AboutUs";
 import FAQPage from "./components/FaqPage";
 import UserProfile from "./components/UserProfile";;
-// import AthleteProfileSearch from './components/AthleteProfileSearch';
+import { AthleteProfile } from './components/AthleteProfileSearch';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -70,7 +70,7 @@ const App: React.FC = () => {
           path="/search"
           element={
             <PrivateRoute>
-              <AthleteProfileForm onSave={handleSave} initialData={{}} />
+              <AthleteProfile name={""} />
             </PrivateRoute>
           }
         />

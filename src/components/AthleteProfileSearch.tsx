@@ -1,199 +1,106 @@
-// import React, { useState, useEffect } from "react";
-// import Header from "./ui/Header";
-// import Footer from "./ui/Footer";
-// import { AthleteProfileForm } from "./athlete-profile-form";
-// // import { AthleteProfileCard } from "./athlete-profile-card";
-// import { SearchResults } from "./search-results";
-// import Select from "react-select";
-// import { AnimatePresence, motion } from "framer-motion";
-// import { Card, CardContent } from "./ui/card";
-// import Loader from "./loader/Loader"; // Custom Loader Component
-// import { collection, addDoc } from "firebase/firestore";
-// import { db } from "../firebaseConfig";
-// import axios from "axios";
-// import femaleSports from "src/data/FemaleSports";
-// import maleSports from "src/data/MaleSports";
-// import sportConfigs from "./configs/sportConfigs";
+'use client'
 
-// const AthleteProfileSearch = ({ name }: { name: string }) => {
-//   const [isEditing, setIsEditing] = useState(true);
-//   const [profileData, setProfileData] = useState<any>({});
-//   const [searchResults, setSearchResults] = useState<any[] | null>(null);
-//   const [isSearching, setIsSearching] = useState(false);
-//   const [gender, setGender] = useState<"male" | "female" | "">("");
-//   const [sport, setSport] = useState<{ value: string; label: string } | null>(null);
-//   const [parameters, setParameters] = useState<string[]>([]);
-//   const [statistics, setStatistics] = useState<{ [key: string]: string }>({});
-//   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
+import { useState } from 'react'
+import { AthleteProfileForm } from './athlete-profile-form'
+import { AthleteProfileCard } from './athlete-profile-card'
+import { SearchResults } from './search-results'
+import { AnimatePresence, motion } from 'framer-motion'
+import { Loader2 } from 'lucide-react'
+import { Card, CardContent } from "./ui/card"
 
-//   const sportsOptions = {
-//     male: maleSports.map((sport) => ({
-//       value: sport.name.toLowerCase(),
-//       label: `${sport.emoji} ${sport.name}`,
-//     })),
-//     female: femaleSports.map((sport) => ({
-//       value: sport.name.toLowerCase(),
-//       label: `${sport.emoji} ${sport.name}`,
-//     })),
-//   };
+interface AthleteProfileProps {
+  name: string
+}
 
-//   useEffect(() => {
-//     if (sport) {
-//       setParameters(sportConfigs[sport.value] || []);
-//       setStatistics({});
-//     }
-//   }, [sport]);
+export function AthleteProfile({ name }: AthleteProfileProps) {
+  const [isEditing, setIsEditing] = useState(true)
+  const [profileData, setProfileData] = useState<any>({})
+  const [isSearching, setIsSearching] = useState(false)
+  const [searchResults, setSearchResults] = useState<any[] | null>(null)
 
-//   const handleSave = (data: any) => {
-//     setProfileData({ ...data, name });
-//     setIsEditing(false);
-//   };
+  const handleSave = (data: any) => {
+    setProfileData({ ...data, name })
+    setIsEditing(false)
+  }
 
-//   const handleEdit = () => {
-//     setIsEditing(true);
-//     setSearchResults(null);
-//   };
+  const handleEdit = () => {
+    setIsEditing(true)
+    setSearchResults(null)
+  }
 
-//   const handleSearch = async () => {
-//     const isAnyParameterFilled = Object.values(statistics).some(
-//       (value) => value.trim() !== "" && !isNaN(Number(value))
-//     );
+  const handleSearch = async () => {
+    setIsSearching(true)
+    setSearchResults(null)
 
-//     if (!isAnyParameterFilled) {
-//       setToast({
-//         show: true,
-//         message: "Please fill in at least one parameter with valid numeric data.",
-//         type: "error",
-//       });
-//       setTimeout(() => setToast({ show: false, message: "", type: "success" }), 3000);
-//       return;
-//     }
+    // Simulating an API call with a delay
+    await new Promise(resolve => setTimeout(resolve, 2000))
 
-//     setIsSearching(true);
-//     setSearchResults(null);
+    // Mock results
+    const mockResults = [
+      {
+        name: "Stanford University",
+        scholarshipType: "Full athletic scholarships; combined with academic scholarships for qualified students",
+        averagePlayerStats: "Top players often have singles records of 20-5 or better; serve speeds around 100 mph",
+        coachInfo: "Lele Forood / lelef@stanford.edu",
+        recruitingTimeline: "Begin contact in junior year; provide match footage, academic transcripts, and standardized test scores",
+        averagePracticeSchedule: "5-6 days per week; 3-4 hours per day",
+        teamRankings: "Consistently ranked in top 5",
+        scholarshipRenewalConditions: "Maintain top performance in matches and practices; GPA of 3.5 or higher"
+      },
+      // Add more universities here...
+    ]
 
-//     const statEntries = parameters
-//       .map((param) => `${param}: ${statistics[param] || "N/A"}`)
-//       .join(", ");
+    setSearchResults(mockResults)
+    setIsSearching(false)
+  }
 
-//     const prompt = `Provide recommendations for a ${gender} ${sport?.label} player based on stats: ${statEntries}`;
+  return (
+    <div className="container mx-auto p-4">
+      <AnimatePresence mode="wait">
+        {isEditing ? (
+          <motion.div
+            key="form"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <AthleteProfileForm onSave={handleSave} initialData={profileData} />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="card"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <AthleteProfileCard
+              name={name}
+              sport={profileData.sport || 'Sport'}
+              gender={profileData.gender || 'Gender'}
+              onEdit={handleEdit}
+              onSearch={handleSearch}
+              sportData={profileData.sportData || {}}
+              isLoading={isSearching}
+            />
+            {isSearching && (
+              <Card className="mt-8 w-full mx-auto overflow-hidden">
+                <CardContent className="p-6 min-h-[200px] flex items-center justify-center">
+                  <div className="flex items-center justify-center space-x-2">
+                    <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                    <span className="text-sm">Searching NCAA Programs...</span>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+            {searchResults && (
+              <SearchResults results={searchResults} />
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  )
+}
 
-//     try {
-//       const apiResponse = await axios.post("https://api.openai.com/v1/completions", {
-//         model: "text-davinci-003",
-//         prompt,
-//         max_tokens: 500,
-//         temperature: 0.7,
-//       }, {
-//         headers: {
-//           "Content-Type": "application/json",
-//           Authorization: `Bearer ${process.env.CHATGPT_API_KEY}`, // Ensure API key is set in environment
-//         },
-//       });
-
-//       const result = apiResponse.data.choices[0]?.text.trim() || "No response.";
-//       const parsedResults = result.split("\n").map((line: any) => ({ name: line, details: line })); // Mock parsing for simplicity
-//       setSearchResults(parsedResults);
-//     } catch (error) {
-//       console.error("Error:", error);
-//       setToast({
-//         show: true,
-//         message: "Error fetching data. Try again.",
-//         type: "error",
-//       });
-//     } finally {
-//       setIsSearching(false);
-//     }
-//   };
-
-//   const handleSaveResume = async () => {
-//     if (!gender || !sport) {
-//       setToast({
-//         show: true,
-//         message: "Please select both gender and sport before saving the resume.",
-//         type: "error",
-//       });
-//       setTimeout(() => setToast({ show: false, message: "", type: "success" }), 3000);
-//       return;
-//     }
-
-//     try {
-//       const resumeData = {
-//         gender,
-//         sport: sport.label,
-//         parameters: statistics,
-//         createdAt: new Date().toISOString(),
-//       };
-
-//       await addDoc(collection(db, "resumes"), resumeData);
-
-//       setToast({ show: true, message: "Resume saved successfully!", type: "success" });
-//       setTimeout(() => setToast({ show: false, message: "", type: "success" }), 3000);
-//     } catch (error) {
-//       console.error("Error saving resume:", error);
-//       setToast({
-//         show: true,
-//         message: "Failed to save resume. Please try again.",
-//         type: "error",
-//       });
-//     }
-//   };
-
-//   return (
-//     <div className="w-full min-h-screen flex flex-col">
-//       <Header />
-//       <AnimatePresence mode="wait">
-//         {isEditing ? (
-//           <motion.div
-//             key="form"
-//             initial={{ opacity: 0, y: 20 }}
-//             animate={{ opacity: 1, y: 0 }}
-//             exit={{ opacity: 0, y: -20 }}
-//             transition={{ duration: 0.3 }}
-//           >
-//             <AthleteProfileForm onSave={handleSave} initialData={profileData} />
-//           </motion.div>
-//         ) : (
-//           <motion.div
-//             key="card"
-//             initial={{ opacity: 0, y: 20 }}
-//             animate={{ opacity: 1, y: 0 }}
-//             exit={{ opacity: 0, y: -20 }}
-//             transition={{ duration: 0.3 }}
-//           >
-//             <AthleteProfileCard
-//               name={name}
-//               sport={profileData.sport || "Sport"}
-//               gender={profileData.gender || "Gender"}
-//               onEdit={handleEdit}
-//               onSearch={handleSearch}
-//               sportData={profileData.sportData || {}}
-//               isLoading={isSearching}
-//             />
-//             {isSearching && (
-//               <Card className="mt-8 w-full mx-auto overflow-hidden">
-//                 <CardContent className="p-6 min-h-[200px] flex items-center justify-center">
-//                   <Loader />
-//                   <span className="text-sm">Searching NCAA Programs...</span>
-//                 </CardContent>
-//               </Card>
-//             )}
-//             {searchResults && <SearchResults results={searchResults} />}
-//           </motion.div>
-//         )}
-//       </AnimatePresence>
-//       <Footer />
-//       {toast.show && (
-//         <div
-//           className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 p-4 rounded ${
-//             toast.type === "success" ? "bg-green-500" : "bg-red-500"
-//           }`}
-//         >
-//           {toast.message}
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default AthleteProfileSearch;
