@@ -5,6 +5,8 @@ import { SearchResults } from './search-results'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 import { Card, CardContent } from "./ui/card"
+import Header from "./ui/Header";
+import Footer from "./ui/Footer";
 
 const AthleteProfileSearch: React.FC = () => {
   const [isEditing, setIsEditing] = useState(true);
@@ -58,7 +60,9 @@ const AthleteProfileSearch: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="min-h-screen flex flex-col">
+    <Header />
+    <main className="flex-1 container mx-auto p-6 md:p-8">
     <AnimatePresence mode="wait">
       {isEditing ? (
         <motion.div
@@ -103,6 +107,8 @@ const AthleteProfileSearch: React.FC = () => {
         </motion.div>
       )}
     </AnimatePresence>
+    </main>
+    <Footer />
     </div>
   );
 };
