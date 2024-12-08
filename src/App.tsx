@@ -1,3 +1,7 @@
+import { AthleteProfileForm } from "./components/athlete-profile-form";
+import "./index.css";
+import "./components/styles/markdown.css";
+import './components/styles/react-select.css';
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { onAuthStateChanged, signOut, User } from "firebase/auth";
@@ -13,10 +17,6 @@ import AboutUs from "./components/AboutUs";
 import FAQPage from "./components/FaqPage";
 import UserProfile from "./components/UserProfile";;
 // import AthleteProfileSearch from './components/AthleteProfileSearch';
-import { AthleteProfileForm } from "./components/athlete-profile-form";
-import "./index.css";
-import "./components/styles/markdown.css";
-import './components/styles/react-select.css';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
