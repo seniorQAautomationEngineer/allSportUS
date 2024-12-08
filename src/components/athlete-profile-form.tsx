@@ -6,16 +6,20 @@ import { Label } from './ui/label';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Card, CardContent } from './ui/card';
 import Select from 'react-select';
-import sportConfigs, { SportParameter } from '../data/sportConfigs';
-import femaleSports from '../data/FemaleSports';
 import maleSports from '../data/MaleSports';
+import femaleSports from '../data/FemaleSports';
+import sportConfigs, { SportParameter } from '../data/sportConfigs';
 
 interface AthleteProfileFormProps {
   onSave: (data: any) => void;
-  initialData?: any;
+  initialData?: {
+    gender: 'male' | 'female' | '';
+    sport: string;
+    additionalData: Record<string, any>;
+  };
 }
 
-const sportsOptions = {
+const sportsOptions: Record<'male' | 'female', { value: string; label: string }[]> = {
   male: maleSports.map((sport) => ({
     value: sport.name.toLowerCase(),
     label: `${sport.emoji} ${sport.name}`,
@@ -26,21 +30,7 @@ const sportsOptions = {
   })),
 };
 
-const customSelectStyles = {
-  control: (base: any) => ({
-    ...base,
-    minHeight: '38px',
-    backgroundColor: 'white',
-    borderColor: '#e2e8f0',
-    borderRadius: '0.25rem',
-    boxShadow: 'none',
-    '&:hover': {
-      borderColor: '#cbd5e1',
-    },
-  }),
-};
-
-export function AthleteProfileForm({ onSave, initialData = {} }: AthleteProfileFormProps) {
+export function AthleteProfileForm({ onSave, initialData = { gender: '', sport: '', additionalData: {} } }: AthleteProfileFormProps) {
   const [formData, setFormData] = useState<{
     gender: 'male' | 'female' | '';
     sport: string;
@@ -86,7 +76,7 @@ export function AthleteProfileForm({ onSave, initialData = {} }: AthleteProfileF
                         : currentValues.filter((v: string) => v !== option);
                       handleDataChange(field.name, newValues);
                     }}
-                    className="w-5 h-5 rounded border-gray-300 text-[#4285F4] focus:ring-[#4285F4]"
+                    className="w-5 h-5 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
                   />
                   <label htmlFor={`${field.name}-${option}`} className="text-sm">
                     {option}
@@ -94,7 +84,12 @@ export function AthleteProfileForm({ onSave, initialData = {} }: AthleteProfileF
                 </div>
               ))}
             </div>
-            {renderConditionalFields(field)}
+            {field.conditionalFields &&
+              formData.additionalData[field.name]?.map((selectedOption: string) =>
+                field.conditionalFields?.[selectedOption]?.map((conditionalField) =>
+                  renderField(conditionalField)
+                )
+              )}
           </div>
         );
       case 'text':
@@ -106,7 +101,7 @@ export function AthleteProfileForm({ onSave, initialData = {} }: AthleteProfileF
               placeholder={field.placeholder}
               value={formData.additionalData[field.name] || ''}
               onChange={(e) => handleDataChange(field.name, e.target.value)}
-              className="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-[#4285F4] focus:border-[#4285F4]"
+              className="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
         );
@@ -115,39 +110,35 @@ export function AthleteProfileForm({ onSave, initialData = {} }: AthleteProfileF
     }
   };
 
-  const renderConditionalFields = (field: SportParameter) => {
-    if (!field.conditionalFields) return null;
-
-    return Object.entries(field.conditionalFields).map(([option, conditionalFields]) => {
-      if (!formData.additionalData[field.name]?.includes(option)) return null;
-
-      return conditionalFields.map((conditionalField) => renderField(conditionalField));
-    });
-  };
-
   return (
     <Card className="w-full max-w-md mx-auto bg-white shadow-sm">
-      <div className="bg-[#4285F4] py-3 px-4">
+      <div className="bg-blue-500 py-3 px-4">
         <h1 className="text-xl font-semibold text-white">Athlete Profile</h1>
       </div>
       <CardContent className="p-4">
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Gender Selection */}
           <div className="space-y-4">
-            {/* Gender Selection */}
             <div>
               <h2 className="text-base font-semibold mb-1">Gender</h2>
               <RadioGroup
                 value={formData.gender}
-                onValueChange={(value) => setFormData({ ...formData, gender: value as 'male' | 'female' })}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, gender: value as 'male' | 'female' })
+                }
                 className="flex gap-4"
               >
                 <div className="flex items-center">
                   <RadioGroupItem value="female" id="female" className="w-5 h-5" />
-                  <Label htmlFor="female" className="ml-2 text-sm">Female</Label>
+                  <Label htmlFor="female" className="ml-2 text-sm">
+                    Female
+                  </Label>
                 </div>
                 <div className="flex items-center">
                   <RadioGroupItem value="male" id="male" className="w-5 h-5" />
-                  <Label htmlFor="male" className="ml-2 text-sm">Male</Label>
+                  <Label htmlFor="male" className="ml-2 text-sm">
+                    Male
+                  </Label>
                 </div>
               </RadioGroup>
             </div>
@@ -160,28 +151,30 @@ export function AthleteProfileForm({ onSave, initialData = {} }: AthleteProfileF
                   options={sportsOptions[formData.gender]}
                   value={
                     formData.sport
-                      ? { value: formData.sport, label: sportsOptions[formData.gender].find((s) => s.value === formData.sport)?.label || '' }
+                      ? {
+                          value: formData.sport,
+                          label: sportConfigs[formData.sport]?.name || '',
+                        }
                       : null
                   }
                   onChange={(option) =>
                     setFormData({ ...formData, sport: option?.value || '' })
                   }
                   placeholder="Select a sport"
-                  styles={customSelectStyles}
                 />
               </div>
             )}
 
             {/* Sport-Specific Fields */}
             {formData.sport &&
-              sportConfigs[formData.sport]?.fields.map(renderField)}
+              sportConfigs[formData.sport].fields.map((field) => renderField(field))}
           </div>
 
           {/* Save Button */}
           {formData.gender && (
             <Button
               type="submit"
-              className="w-full py-2.5 text-sm font-medium bg-[#4285F4] hover:bg-[#3b7de2] text-white rounded"
+              className="w-full py-2.5 text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white rounded"
             >
               Save Profile
             </Button>
