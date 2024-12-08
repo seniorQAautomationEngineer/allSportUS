@@ -9,6 +9,7 @@ interface AthleteProfileCardProps {
   additionalData: Record<string, any>;
   onEdit: () => void;
   onSearch: () => void;
+  isLoading: boolean;
 }
 
 export function AthleteProfileCard({
