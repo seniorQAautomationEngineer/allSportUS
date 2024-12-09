@@ -7,6 +7,7 @@ import { Loader2 } from 'lucide-react'
 import { Card, CardContent } from "./ui/card"
 import Header from "./ui/Header";
 import Footer from "./ui/Footer";
+import { CollegeMatchCard } from './CollegeMatchCard(';
 
 const AthleteProfileSearch: React.FC = () => {
   const [isEditing, setIsEditing] = useState(true);
@@ -73,6 +74,7 @@ const AthleteProfileSearch: React.FC = () => {
           transition={{ duration: 0.3 }}
         >
           <AthleteProfileForm onSave={handleSave} initialData={profileData} />
+          {/* <CollegeMatchCard></CollegeMatchCard> */}
         </motion.div>
       ) : (
         <motion.div
