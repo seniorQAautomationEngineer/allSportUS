@@ -62,9 +62,9 @@ export function AthleteProfileForm({ onSave, initialData = { gender: '', sport: 
     switch (field.type) {
       case 'checkbox':
         return (
-          <div key={field.name}>
+          <div key={field.name} className="mb-4"> {/* Added margin-bottom */}
             <h2 className="text-base font-semibold mb-2">{field.label}</h2>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3 mb-4"> {/* Added margin-bottom */}
               {field.options?.map((option) => (
                 <div key={option} className="flex items-center space-x-2">
                   <input
@@ -103,9 +103,9 @@ export function AthleteProfileForm({ onSave, initialData = { gender: '', sport: 
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <div className="space-y-2 p-4 bg-gray-50 rounded-lg mb-4">
-                <div className="space-y-4 p-3 rounded-md"></div>
-                <div className="space-y-1 mb-3 last:mb-0"></div>
+            <div className="space-y-1 p-1 pt-0 bg-gray-50 rounded-lg mb-1">
+                {/* <div className="space-y-4 p-3 rounded-md"></div>
+                <div className="space-y-1 mb-3 last:mb-0"></div> */}
                 <Label className="ext-sm font-normal">{field.label}:</Label>
                 <Input
                   id={field.name}
@@ -135,7 +135,7 @@ export function AthleteProfileForm({ onSave, initialData = { gender: '', sport: 
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto bg-white shadow-sm">
+    <Card className="w-full max-w-lg mx-auto bg-white shadow-sm">
       <div className="bg-blue-500 py-3 px-4">
         <h1 className="text-xl font-semibold text-white">Athlete Profile</h1>
       </div>
@@ -213,5 +213,6 @@ export function AthleteProfileForm({ onSave, initialData = { gender: '', sport: 
         </form>
       </CardContent>
     </Card>
+    
   );
 }
