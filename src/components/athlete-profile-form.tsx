@@ -9,6 +9,8 @@ import Select from 'react-select';
 import maleSports from '../data/MaleSports';
 import femaleSports from '../data/FemaleSports';
 import sportConfigs, { SportParameter } from '../data/sportConfigs';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Input } from './ui/input';
 
 interface AthleteProfileFormProps {
   onSave: (data: any) => void;
@@ -94,16 +96,38 @@ export function AthleteProfileForm({ onSave, initialData = { gender: '', sport: 
         );
       case 'text':
         return (
-          <div key={field.name}>
-            <h2 className="text-base font-semibold mb-1">{field.label}</h2>
-            <input
-              type="text"
-              placeholder={field.placeholder}
-              value={formData.additionalData[field.name] || ''}
-              onChange={(e) => handleDataChange(field.name, e.target.value)}
-              className="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
+          <AnimatePresence key={field.name}>
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="space-y-2 p-4 bg-gray-50 rounded-lg mb-4">
+                <div className="space-y-4 p-3 rounded-md"></div>
+                <div className="space-y-1 mb-3 last:mb-0"></div>
+                <Label className="ext-sm font-normal">{field.label}:</Label>
+                <Input
+                  id={field.name}
+                  type="text"
+                  placeholder={field.placeholder}
+                  value={formData.additionalData[field.name] || ''}
+                  onChange={(e) => handleDataChange(field.name, e.target.value)}
+                  className="w-full h-10 text-base"
+                />
+              </div>
+            </motion.div>
+            </AnimatePresence>
+          // <div key={field.name}>
+          //   <h2 className="text-base font-semibold mb-1">{field.label}</h2>
+          //   <input
+          //     type="text"
+          //     placeholder={field.placeholder}
+          //     value={formData.additionalData[field.name] || ''}
+          //     onChange={(e) => handleDataChange(field.name, e.target.value)}
+          //     className="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+          //   />
+          // </div>
         );
       default:
         return null;
@@ -146,21 +170,28 @@ export function AthleteProfileForm({ onSave, initialData = { gender: '', sport: 
             {/* Sport Selection */}
             {formData.gender && (
               <div>
-                <h2 className="text-base font-semibold mb-1">Select Sport</h2>
-                <Select
-                  options={sportsOptions[formData.gender]}
-                  value={
-                    formData.sport
-                      ? {
-                          value: formData.sport,
-                          label: sportConfigs[formData.sport]?.name || '',
-                        }
-                      : null
-                  }
-                  onChange={(option) =>
-                    setFormData({ ...formData, sport: option?.value || '' })
-                  }
-                  placeholder="Select a sport"
+                 <label htmlFor="sport-select" className="block text-sm font-medium text-gray-700">
+                    Sport
+                  </label>
+                  <Select
+                    id="sport-select"
+                    className="react-select-container mt-2"
+                    classNamePrefix="react-select"
+                    options={sportsOptions[formData.gender]}
+                    value={
+                      formData.sport
+                        ? {
+                            value: formData.sport,
+                            label: sportConfigs[formData.sport]?.name || '',
+                          }
+                        : null
+                    }
+                    onChange={(option) =>
+                      setFormData({ ...formData, sport: option?.value || '' })
+                    }
+                    isClearable
+                    isSearchable
+                    placeholder="Select a sport"
                 />
               </div>
             )}

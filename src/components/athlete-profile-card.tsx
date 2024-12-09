@@ -1,6 +1,11 @@
 'use client';
 
-import sportConfigs, { SportParameter, SportConfig } from '../data/sportConfigs';
+import { useState } from "react";
+import sportConfigs from '../data/sportConfigs';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Input } from './ui/input'
+import { Label } from './ui/label'
+
 
 interface AthleteProfileCardProps {
   name: string;
@@ -9,7 +14,7 @@ interface AthleteProfileCardProps {
   additionalData: Record<string, any>;
   onEdit: () => void;
   onSearch: () => void;
-  isLoading: boolean;
+  isLoading: boolean; // Pass isSearching state from parent
 }
 
 export function AthleteProfileCard({
@@ -19,6 +24,7 @@ export function AthleteProfileCard({
   additionalData,
   onEdit,
   onSearch,
+  isLoading, // Use the isLoading prop here
 }: AthleteProfileCardProps) {
   const renderAdditionalData = () => {
     if (!sport || !sportConfigs[sport]) return null;
@@ -27,15 +33,15 @@ export function AthleteProfileCard({
 
     return (
       <div className="mt-4">
-        {config.fields.map((field) => {
-          if (field.type === 'checkbox' && additionalData[field.name]?.length > 0) {
-            // Render checkboxes
-            return (
-              <div key={field.name}>
-                <h3 className="text-base font-semibold">{field.label}:</h3>
-                <p className="text-sm">{additionalData[field.name]?.join(', ') || 'N/A'}</p>
+      {config.fields.map((field) => {
+        if (field.type === 'checkbox' && Array.isArray(additionalData[field.name])) {
+          // Render checkboxes and conditional fields
+          return (
+            <div key={field.name} className="mb-4">
+              <h3 className="text-base font-semibold">{field.label}:</h3>
+              <p className="text-sm">{additionalData[field.name].join(', ') || 'N/A'}</p>
 
-                {/* Conditional Fields */}
+              <AnimatePresence>
                 {additionalData[field.name].map((option: string) => {
                   const conditionalFields = field.conditionalFields?.[option];
                   if (!conditionalFields) return null;
@@ -43,21 +49,49 @@ export function AthleteProfileCard({
                   return conditionalFields.map((conditionalField) => {
                     const value = additionalData[conditionalField.name] || 'N/A';
                     return (
-                      <p key={conditionalField.name} className="text-sm">
-                        <strong>{conditionalField.label}:</strong> {value}
-                      </p>
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
+                          <Label className="text-sm font-semibold mb-2 block">{conditionalField.label}:</Label>
+                          <p className="text-sm">{value}</p>
+                        </div>
+                      </motion.div>
                     );
                   });
                 })}
-              </div>
-            );
+              </AnimatePresence>
+            </div>
+          );
           } else if (field.type === 'text') {
             // Render text fields
             return (
-              <div key={field.name}>
-                <h3 className="text-base font-semibold">{field.label}:</h3>
-                <p className="text-sm">{additionalData[field.name] || 'N/A'}</p>
-              </div>
+              <AnimatePresence key={field.name}>
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
+                    <Label className="text-sm font-semibold">{field.label}:</Label>
+                    <Input
+                      id={field.name}
+                      type="text"
+                      placeholder="Enter value"
+                      value={additionalData[field.name] || 'N/A'}
+                      className="w-full h-10 text-base"
+                    />
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+              // <div key={field.name}>
+              //   <h3 className="text-base font-semibold">{field.label}:</h3>
+              //   <p className="text-sm">{additionalData[field.name] || 'N/A'}</p>
+              // </div>
             );
           }
           return null;
@@ -84,9 +118,12 @@ export function AthleteProfileCard({
 
       <button
         onClick={onSearch}
-        className="w-full mt-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+        className={`w-full mt-4 py-2 rounded ${
+          isLoading ? "bg-blue-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
+        }`}
+        disabled={isLoading}
       >
-        Search NCAA Programs
+        {isLoading ? "Searching..." : "Search NCAA Programs"}
       </button>
     </div>
   );
