@@ -27,16 +27,17 @@ const AdditionalInfo: React.FC = () => {
       }
 
       // Save additional user information to Firestore
-      await addDoc(collection(db, "users"), {
+      const docRef = await addDoc(collection(db, "users"), {
         firstName,
         lastName,
         age: parseInt(age, 10),
         country: country.value,
         createdAt: new Date().toISOString(),
       });
-
-      console.log("Additional information saved successfully.");
-      navigate("/"); // Redirect to home or dashboard
+      const userId = docRef.id; // Get the generated document ID
+      localStorage.setItem("userId", userId);
+      console.log("User ID generated:", userId);
+      navigate("/search", { state: { userId } }); // Redirect to home or dashboard
     } catch (error: any) {
       console.error("Error saving additional information:", error);
       setErrorMessage(error.message || "Failed to save information. Please try again.");

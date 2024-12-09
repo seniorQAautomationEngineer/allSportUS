@@ -11,6 +11,10 @@ import femaleSports from '../data/FemaleSports';
 import sportConfigs, { SportParameter } from '../data/sportConfigs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Input } from './ui/input';
+import { useLocation, useNavigate } from "react-router-dom";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
+
 
 interface AthleteProfileFormProps {
   onSave: (data: any) => void;
@@ -33,6 +37,9 @@ const sportsOptions: Record<'male' | 'female', { value: string; label: string }[
 };
 
 export function AthleteProfileForm({ onSave, initialData = { gender: '', sport: '', additionalData: {} } }: AthleteProfileFormProps) {
+  const location = useLocation() as { state: { userId?: string } };
+  const userId = location.state?.userId || localStorage.getItem("userId");
+
   const [formData, setFormData] = useState<{
     gender: 'male' | 'female' | '';
     sport: string;
@@ -53,9 +60,22 @@ export function AthleteProfileForm({ onSave, initialData = { gender: '', sport: 
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSave(formData);
+  const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+    if (!userId) {
+      alert("User ID is missing. Please go back and try again.");
+      return;
+    }
+    try {
+      onSave(formData);
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, { sportData: formData });
+      console.log("Sport data saved successfully.");
+      alert("Profile updated!");
+    } catch (error) {
+      console.error("Error saving sport data:", error);
+      alert("Failed to save profile. Please try again.");
+  }
   };
 
   const renderField = (field: SportParameter) => {
