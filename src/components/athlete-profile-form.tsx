@@ -11,8 +11,8 @@ import femaleSports from '../data/FemaleSports';
 import sportConfigs, { SportParameter } from '../data/sportConfigs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Input } from './ui/input';
-import { useLocation, useNavigate } from "react-router-dom";
-import { doc, updateDoc } from "firebase/firestore";
+import { useLocation } from "react-router-dom";
+import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
 
 
@@ -45,17 +45,17 @@ export function AthleteProfileForm({ onSave, initialData = { gender: '', sport: 
     sport: string;
     additionalData: Record<string, any>;
   }>({
-    gender: initialData.gender || '',
-    sport: initialData.sport || '',
-    additionalData: initialData.additionalData || {},
+    gender: '',
+    sport: '',
+    additionalData: {}, // Initialize additionalData as an empty object
   });
-
+  
   const handleDataChange = (field: string, value: any) => {
     setFormData((prev) => ({
       ...prev,
       additionalData: {
         ...prev.additionalData,
-        [field]: value,
+        [field]: value, // Replace or add the field in additionalData
       },
     }));
   };
@@ -69,9 +69,21 @@ export function AthleteProfileForm({ onSave, initialData = { gender: '', sport: 
     try {
       onSave(formData);
       const userRef = doc(db, "users", userId);
-      await updateDoc(userRef, { sportData: formData });
+      // Replace the entire sportData, including additionalData
+     // Replace the entire sportData, including additionalData
+     await setDoc(
+      userRef,
+      {
+        sportData: {
+          gender: formData.gender,
+          sport: formData.sport,
+          additionalData: formData.additionalData, // Explicitly replace additionalData
+          strokes: formData.additionalData.strokes || [], // Ensure strokes are included
+        },
+      },
+      { merge: true } // Merge with other fields in the document
+    );
       console.log("Sport data saved successfully.");
-      alert("Profile updated!");
     } catch (error) {
       console.error("Error saving sport data:", error);
       alert("Failed to save profile. Please try again.");
@@ -138,16 +150,6 @@ export function AthleteProfileForm({ onSave, initialData = { gender: '', sport: 
               </div>
             </motion.div>
             </AnimatePresence>
-          // <div key={field.name}>
-          //   <h2 className="text-base font-semibold mb-1">{field.label}</h2>
-          //   <input
-          //     type="text"
-          //     placeholder={field.placeholder}
-          //     value={formData.additionalData[field.name] || ''}
-          //     onChange={(e) => handleDataChange(field.name, e.target.value)}
-          //     className="w-full p-2 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-          //   />
-          // </div>
         );
       default:
         return null;

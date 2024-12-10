@@ -1,111 +1,179 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
 import sportConfigs from '../data/sportConfigs';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Input } from './ui/input'
-import { Label } from './ui/label'
-
+import { Input } from './ui/input';
+import { Label } from './ui/label';
 
 interface AthleteProfileCardProps {
-  name: string;
-  sport: string;
-  gender: string;
-  additionalData: Record<string, any>;
   onEdit: () => void;
   onSearch: () => void;
-  isLoading: boolean; // Pass isSearching state from parent
+  isLoading: boolean;
 }
 
 export function AthleteProfileCard({
-  name,
-  sport,
-  gender,
-  additionalData,
   onEdit,
   onSearch,
-  isLoading, // Use the isLoading prop here
+  isLoading,
 }: AthleteProfileCardProps) {
-  const renderAdditionalData = () => {
-    if (!sport || !sportConfigs[sport]) return null;
+  const location = useLocation() as { state: { userId?: string } };
+  const userId = location.state?.userId || localStorage.getItem("userId");
 
-    const config = sportConfigs[sport];
+  const [sportData, setSportData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+  
+    const fetchSportData = async () => {
+      if (!userId) {
+        console.error("User ID is missing.");
+        setError("User ID is missing. Please log in again.");
+        setLoading(false);
+        return;
+      }
+  
+      console.log("Fetching data for userId:", userId);
+      try {
+        const userRef = doc(db, "users", userId);
+        let retries = 3;
+  
+        while (retries > 0) {
+          const userDoc = await getDoc(userRef);
+          if (userDoc.exists()) {
+            if (isMounted) {
+              setSportData(userDoc.data().sportData || {});
+              return;
+            }
+          }
+          retries--;
+          await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second
+        }
+  
+        if (isMounted) {
+          console.error("User data not found in the database.");
+          setError("User data not found. Please complete your profile.");
+        }
+      } catch (err) {
+        if (isMounted) {
+          console.error("Error fetching sport data:", err);
+          setError("Failed to fetch sport data. Please try again later.");
+        }
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+  
+    fetchSportData();
+  
+    return () => {
+      isMounted = false; // Prevent state updates after unmount
+    };
+  }, [userId]);
+  
+
+  const renderAdditionalData = () => {
+    if (!sportData || !sportData.additionalData) {
+      return <p>No additional data available.</p>;
+    }
 
     return (
       <div className="mt-4">
-      {config.fields.map((field) => {
-        if (field.type === 'checkbox' && Array.isArray(additionalData[field.name])) {
-          // Render checkboxes and conditional fields
+        <h3 className="text-lg font-semibold mb-2">Additional Data:</h3>
+        {Object.entries(sportData.additionalData).map(([key, value]) => {
+          // Handle "strokes" field differently
+          // if (key === "strokes") {
+          //   if (Array.isArray(value) && value.length > 0) {
+          //     return (
+          //       <motion.div
+          //         key={key}
+          //         initial={{ opacity: 0, height: 0 }}
+          //         animate={{ opacity: 1, height: 'auto' }}
+          //         exit={{ opacity: 0, height: 0 }}
+          //         transition={{ duration: 0.3 }}
+          //         className="bg-gray-50 p-2 rounded mb-2"
+          //       >
+          //         <Label className="text-sm font-semibold">Strokes:</Label>
+          //         <p className="text-sm">{value.join(', ')}</p>
+          //       </motion.div>
+          //     );
+          //   }
+          //   // Skip rendering "strokes" if it's empty
+          //   return null;
+          // }
+
           return (
-            <div key={field.name} className="mb-4">
-              <h3 className="text-base font-semibold">{field.label}:</h3>
-              <p className="text-sm">{additionalData[field.name].join(', ') || 'N/A'}</p>
-
-              <AnimatePresence>
-                {additionalData[field.name].map((option: string) => {
-                  const conditionalFields = field.conditionalFields?.[option];
-                  if (!conditionalFields) return null;
-
-                  return conditionalFields.map((conditionalField) => {
-                    const value = additionalData[conditionalField.name] || 'N/A';
-                    return (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
-                          <Label className="text-sm font-semibold mb-2 block">{conditionalField.label}:</Label>
-                          <p className="text-sm">{value}</p>
-                        </div>
-                      </motion.div>
-                    );
-                  });
-                })}
-              </AnimatePresence>
-            </div>
+            <motion.div
+              key={key}
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3 }}
+              className="bg-gray-50 p-2 rounded mb-2"
+            >
+              <Label className="text-sm font-semibold">{key}:</Label>
+              <p className="text-sm">
+                {typeof value === 'string' || typeof value === 'number'
+                  ? value
+                  : JSON.stringify(value)}
+              </p>
+            </motion.div>
           );
-          } else if (field.type === 'text') {
-            // Render text fields
-            return (
-              <AnimatePresence key={field.name}>
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="space-y-2 p-4 bg-gray-50 rounded-lg">
-                    <Label className="text-sm font-semibold">{field.label}:</Label>
-                    <Input
-                      id={field.name}
-                      type="text"
-                      placeholder="Enter value"
-                      value={additionalData[field.name] || 'N/A'}
-                      className="w-full h-10 text-base"
-                    />
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-              // <div key={field.name}>
-              //   <h3 className="text-base font-semibold">{field.label}:</h3>
-              //   <p className="text-sm">{additionalData[field.name] || 'N/A'}</p>
-              // </div>
-            );
-          }
-          return null;
         })}
       </div>
     );
   };
 
+  const renderSportData = () => {
+    if (!sportData) {
+      return <p>No sport data available.</p>;
+    }
+
+    return (
+      <div className="mt-4">
+        <h3 className="text-lg font-semibold mb-2">Sport Data:</h3>
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          className="bg-gray-50 p-2 rounded mb-2"
+        >
+          <Label className="text-sm font-semibold">Sport:</Label>
+          <p className="text-sm">{sportData.sport || 'N/A'}</p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: 'auto' }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          className="bg-gray-50 p-2 rounded mb-2"
+        >
+          <Label className="text-sm font-semibold">Gender:</Label>
+          <p className="text-sm">{sportData.gender || 'N/A'}</p>
+        </motion.div>
+      </div>
+    );
+  };
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p className="text-red-500">{error}</p>;
+  }
+
   return (
     <div className="w-full max-w-md mx-auto bg-white shadow-sm rounded-lg p-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold">
-          {name} | {sport} | {gender}
-        </h2>
+        <h2 className="text-lg font-bold">Athlete Profile</h2>
         <button
           onClick={onEdit}
           className="text-sm text-blue-500 underline hover:text-blue-600"
@@ -114,6 +182,7 @@ export function AthleteProfileCard({
         </button>
       </div>
 
+      {renderSportData()}
       {renderAdditionalData()}
 
       <button

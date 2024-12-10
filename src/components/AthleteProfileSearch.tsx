@@ -159,10 +159,6 @@ const AthleteProfileSearch: React.FC = () => {
           transition={{ duration: 0.3 }}
         >
           <AthleteProfileCard
-               name={profileData.name}
-               gender={profileData.gender}
-               sport={profileData.sport}
-               additionalData={profileData.additionalData}
                onEdit={handleEdit}
                onSearch={handleSearch}
                isLoading={isSearching}    
