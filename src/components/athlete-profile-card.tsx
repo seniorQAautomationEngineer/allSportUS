@@ -4,10 +4,9 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../firebaseConfig";
-import sportConfigs from '../data/sportConfigs';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Input } from './ui/input';
+import { motion } from 'framer-motion';
 import { Label } from './ui/label';
+import { Card, CardContent } from './ui/card';
 
 interface AthleteProfileCardProps {
   onEdit: () => void;
@@ -77,36 +76,15 @@ export function AthleteProfileCard({
   }, [userId]);
   
 
-  const renderAdditionalData = () => {
-    if (!sportData || !sportData.additionalData) {
-      return <p>No additional data available.</p>;
+  const renderSportStatistic = () => {
+    if (!sportData || !sportData.sportStatistic) {
+      return <p>No sport statitic available.</p>;
     }
 
     return (
       <div className="mt-4">
-        <h3 className="text-lg font-semibold mb-2">Additional Data:</h3>
-        {Object.entries(sportData.additionalData).map(([key, value]) => {
-          // Handle "strokes" field differently
-          // if (key === "strokes") {
-          //   if (Array.isArray(value) && value.length > 0) {
-          //     return (
-          //       <motion.div
-          //         key={key}
-          //         initial={{ opacity: 0, height: 0 }}
-          //         animate={{ opacity: 1, height: 'auto' }}
-          //         exit={{ opacity: 0, height: 0 }}
-          //         transition={{ duration: 0.3 }}
-          //         className="bg-gray-50 p-2 rounded mb-2"
-          //       >
-          //         <Label className="text-sm font-semibold">Strokes:</Label>
-          //         <p className="text-sm">{value.join(', ')}</p>
-          //       </motion.div>
-          //     );
-          //   }
-          //   // Skip rendering "strokes" if it's empty
-          //   return null;
-          // }
-
+        <h3 className="text-lg font-semibold mb-2">Statistic:</h3>
+        {Object.entries(sportData.sportStatistic).map(([key, value]) => {
           return (
             <motion.div
               key={key}
@@ -136,7 +114,7 @@ export function AthleteProfileCard({
 
     return (
       <div className="mt-4">
-        <h3 className="text-lg font-semibold mb-2">Sport Data:</h3>
+        {/* <h3 className="text-lg font-semibold mb-2">Sport Data:</h3> */}
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
@@ -171,20 +149,19 @@ export function AthleteProfileCard({
   }
 
   return (
-    <div className="w-full max-w-md mx-auto bg-white shadow-sm rounded-lg p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-bold">Athlete Profile</h2>
-        <button
-          onClick={onEdit}
-          className="text-sm text-blue-500 underline hover:text-blue-600"
-        >
-          Edit Profile
-        </button>
+    <Card className="w-full max-w-lg mx-auto bg-white shadow-sm">
+      <div className="bg-blue-500 py-3 px-4">
+        <h1 className="text-xl font-semibold text-white">Athlete Profile</h1>
       </div>
-
+      <CardContent className="p-4">
+      <button
+        onClick={onEdit}
+        className="text-sm text-blue-500 underline hover:text-blue-600"
+      >
+        Edit Profile
+      </button>
       {renderSportData()}
-      {renderAdditionalData()}
-
+      {renderSportStatistic()}
       <button
         onClick={onSearch}
         className={`w-full mt-4 py-2 rounded ${
@@ -194,6 +171,7 @@ export function AthleteProfileCard({
       >
         {isLoading ? "Searching..." : "Search NCAA Programs"}
       </button>
-    </div>
+    </CardContent>
+  </Card>
   );
 }

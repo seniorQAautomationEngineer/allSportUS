@@ -147,7 +147,7 @@ const AthleteProfileSearch: React.FC = () => {
           exit={{ opacity: 0, y: -20 }}
           transition={{ duration: 0.3 }}
         >
-          <AthleteProfileForm onSave={handleSave} initialData={profileData} />
+          <AthleteProfileForm onSave={handleSave} />
           {/* <CollegeMatchCard></CollegeMatchCard> */}
         </motion.div>
       ) : (
