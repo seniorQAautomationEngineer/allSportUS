@@ -37,12 +37,10 @@ export function AthleteProfileForm({ onSave }: AthleteProfileFormProps) {
   const [formData, setFormData] = useState<{
     gender: 'male' | 'female' | '';
     sport: string;
-    types: string[]; // Define types as an array of strings or adjust according to your data type
     sportStatistic: Record<string, any>;
   }>({
     gender: '',
     sport: '',
-    types: [], // Initialize types as an empty array
     sportStatistic: {},
   });
 
@@ -69,7 +67,6 @@ export function AthleteProfileForm({ onSave }: AthleteProfileFormProps) {
       const updatedSportData = {
         gender: formData.gender,
         sport: formData.sport,
-        types: formData.types,
         sportStatistic: formData.sportStatistic,
       };
   

@@ -43,21 +43,6 @@ export function SearchResults({ results }: SearchResultsProps) {
               </span>
             </div>
             <div className="space-y-4 text-xs sm:text-sm leading-relaxed">
-              <p>Based on your impressive athletic and academic profile, here is a tailored list of top NCAA Division I universities renowned for their women's tennis programs. This selection considers your performance metrics and academic achievements.</p>
-              
-              {/* {results.map((university, index) => (
-                <div key={index} className="mb-4">
-                  <h3 className="font-bold">{university.name}</h3>
-                  <p><strong>Scholarship:</strong> {university.scholarshipType}</p>
-                  <p><strong>Rankings:</strong> {university.teamRankings}</p>
-                  <p><strong>Renewal Conditions:</strong> {university.scholarshipRenewalConditions}</p>
-                  <p><strong>Coach:</strong> {university.coachInfo}</p>
-                  <p><strong>Recruiting Timeline:</strong> {university.recruitingTimeline}</p>
-                  <p><strong>Average Player Stats:</strong> {university.averagePlayerStats}</p>
-                  <p><strong>Practice Schedule:</strong> {university.averagePracticeSchedule}</p>
-                </div>
-              ))} */}
-
                 <ReactMarkdown 
                  remarkPlugins={[remarkGfm]}
                  components={{
