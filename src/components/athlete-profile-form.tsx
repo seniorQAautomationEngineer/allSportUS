@@ -140,10 +140,15 @@ export function AthleteProfileForm({ onSave }: AthleteProfileFormProps) {
                 <Label className="text-sm font-normal">{field.label}:</Label>
                 <Input
                   id={field.name}
-                  type="text"
                   placeholder={field.placeholder}
                   value={formData.sportStatistic[field.name] || ''}
-                  onChange={(e) => handleDataChange(field.name, e.target.value)}
+                  onChange={(e) => {
+                    const inputValue = e.target.value;
+                    // Validate numeric or time formats
+                    if (/^\d*\.?\d*\.?\d*$/.test(inputValue)) {
+                      handleDataChange(field.name, inputValue);
+                    }
+                  }}
                   className="w-full h-10 text-base"
                 />
               </div>
