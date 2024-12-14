@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
@@ -7,11 +9,13 @@ import { getAuth } from "firebase/auth"; // Ensure authentication
 import Header from "./ui/Header";
 import Footer from "./ui/Footer";
 import allCountries from "src/data/AllCountries";
+import DatePicker from "react-datepicker"; // Add the react-datepicker library
+import "react-datepicker/dist/react-datepicker.css"; // Add the datepicker styles
 
 const AdditionalInfo: React.FC = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [age, setAge] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null); // New DOB state
   const [country, setCountry] = useState<{ value: string; label: string } | null>(null);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -28,24 +32,23 @@ const AdditionalInfo: React.FC = () => {
         throw new Error("Please select a country.");
       }
 
+      if (!dateOfBirth) {
+        throw new Error("Please select your date of birth.");
+      }
+
       const user = auth.currentUser;
       if (!user) {
         throw new Error("User is not authenticated.");
       }
 
-      const { email } = user; // Retrieve the email from the authenticated user
-      if (!email) {
-        throw new Error("User email is missing.");
-      }
-
-      // Save additional user information to Firestore with `uid` as the document ID
+      // Save additional user information to Firestore
       const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, {
-        email,
         firstName,
         lastName,
-        age: parseInt(age, 10),
+        dateOfBirth: dateOfBirth.toISOString(), // Store DOB as ISO format
         country: country.value,
+        email: user.email, // Store email from the authenticated user
         createdAt: new Date().toISOString(),
       });
 
@@ -68,6 +71,7 @@ const AdditionalInfo: React.FC = () => {
           <p className="text-gray-600">Complete your registration by providing the details below.</p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* First Name Field */}
           <div>
             <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
               First Name
@@ -82,6 +86,8 @@ const AdditionalInfo: React.FC = () => {
               required
             />
           </div>
+
+          {/* Last Name Field */}
           <div>
             <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
               Last Name
@@ -96,20 +102,24 @@ const AdditionalInfo: React.FC = () => {
               required
             />
           </div>
+
+          {/* Date of Birth Field */}
           <div>
-            <label htmlFor="age" className="block text-sm font-medium text-gray-700">
-              Age
+            <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700">
+              Date of Birth
             </label>
-            <input
-              type="number"
-              id="age"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              placeholder="Enter your age"
+            <DatePicker
+              id="dateOfBirth"
+              selected={dateOfBirth}
+              onChange={(date) => setDateOfBirth(date)}
+              dateFormat="yyyy-MM-dd"
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholderText="Select your date of birth"
               required
             />
           </div>
+
+          {/* Country Dropdown */}
           <div>
             <label htmlFor="country" className="block text-sm font-medium text-gray-700">
               Country
@@ -126,6 +136,8 @@ const AdditionalInfo: React.FC = () => {
               onChange={(selectedOption) => setCountry(selectedOption)}
             />
           </div>
+
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
@@ -133,6 +145,8 @@ const AdditionalInfo: React.FC = () => {
           >
             {loading ? "Saving..." : "Save Information"}
           </button>
+
+          {/* Error Message */}
           {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
         </form>
       </main>
