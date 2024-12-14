@@ -49,7 +49,7 @@ export function AthleteProfileForm({ onSave }: AthleteProfileFormProps) {
       ...prev,
       sportStatistic: {
         ...prev.sportStatistic,
-        [field]: value, // Update or add the field in sportStatistic
+        [field]: value,
       },
     }));
   };
@@ -63,7 +63,6 @@ export function AthleteProfileForm({ onSave }: AthleteProfileFormProps) {
     }
   
     try {
-      // Define the new sportData object
       const updatedSportData = {
         gender: formData.gender,
         sport: formData.sport,
@@ -72,23 +71,20 @@ export function AthleteProfileForm({ onSave }: AthleteProfileFormProps) {
   
       const userRef = doc(db, "users", userId);
   
-      // Replace the sportData field explicitly (remove old data)
+      // Replace the sportData field explicitly
       await setDoc(
         userRef,
-        {
-          sportData: updatedSportData, // Fully replace sportData
-        },
-        { merge: false } // Disable merging to avoid retaining old fields
+        { sportData: updatedSportData },
+        { merge: true } // Retain other fields like email, firstName, etc.
       );
   
-      console.log("Sport data fully replaced successfully.");
-      onSave(updatedSportData); // Optional callback for additional actions
+      console.log("Sport data updated successfully.");
+      onSave(updatedSportData); // Callback for additional actions
     } catch (error) {
-      console.error("Error replacing sport data:", error);
+      console.error("Error updating sport data:", error);
       alert("Failed to save profile. Please try again.");
     }
   };
-  
 
   const renderField = (field: SportParameter) => {
     switch (field.type) {
@@ -108,7 +104,6 @@ export function AthleteProfileForm({ onSave }: AthleteProfileFormProps) {
                       const newValues = e.target.checked
                         ? [...currentValues, option]
                         : currentValues.filter((v: string) => v !== option);
-
                       handleDataChange(field.name, newValues);
                     }}
                     className="w-5 h-5 rounded border-gray-300 text-blue-500 focus:ring-blue-500"
@@ -144,7 +139,6 @@ export function AthleteProfileForm({ onSave }: AthleteProfileFormProps) {
                   value={formData.sportStatistic[field.name] || ''}
                   onChange={(e) => {
                     const inputValue = e.target.value;
-                    // Validate numeric or time formats
                     if (/^\d*\.?\d*\.?\d*$/.test(inputValue)) {
                       handleDataChange(field.name, inputValue);
                     }

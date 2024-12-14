@@ -33,9 +33,15 @@ const AdditionalInfo: React.FC = () => {
         throw new Error("User is not authenticated.");
       }
 
+      const { email } = user; // Retrieve the email from the authenticated user
+      if (!email) {
+        throw new Error("User email is missing.");
+      }
+
       // Save additional user information to Firestore with `uid` as the document ID
       const userRef = doc(db, "users", user.uid);
       await setDoc(userRef, {
+        email,
         firstName,
         lastName,
         age: parseInt(age, 10),
