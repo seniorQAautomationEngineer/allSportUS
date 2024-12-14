@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Select from "react-select";
-import { collection, addDoc } from "firebase/firestore";
-import { db } from "../firebaseConfig"; // Firestore configuration
+import { doc, setDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
+import { getAuth } from "firebase/auth"; // Ensure authentication
 import Header from "./ui/Header";
 import Footer from "./ui/Footer";
 import allCountries from "src/data/AllCountries";
@@ -15,6 +16,7 @@ const AdditionalInfo: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
+  const auth = getAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,18 +28,23 @@ const AdditionalInfo: React.FC = () => {
         throw new Error("Please select a country.");
       }
 
-      // Save additional user information to Firestore
-      const docRef = await addDoc(collection(db, "users"), {
+      const user = auth.currentUser;
+      if (!user) {
+        throw new Error("User is not authenticated.");
+      }
+
+      // Save additional user information to Firestore with `uid` as the document ID
+      const userRef = doc(db, "users", user.uid);
+      await setDoc(userRef, {
         firstName,
         lastName,
         age: parseInt(age, 10),
         country: country.value,
         createdAt: new Date().toISOString(),
       });
-      const userId = docRef.id; // Get the generated document ID
-      localStorage.setItem("userId", userId);
-      console.log("User ID generated:", userId);
-      navigate("/search", { state: { userId } }); // Redirect to home or dashboard
+
+      console.log("User profile created:", user.uid);
+      navigate("/search", { state: { userId: user.uid } });
     } catch (error: any) {
       console.error("Error saving additional information:", error);
       setErrorMessage(error.message || "Failed to save information. Please try again.");
@@ -48,21 +55,13 @@ const AdditionalInfo: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      {/* Header */}
       <Header />
-
-      {/* Main Content */}
       <main className="flex-grow max-w-md mx-auto px-4 py-16">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Additional Information</h1>
-          <p className="text-gray-600">
-            Complete your registration by providing the details below.
-          </p>
+          <p className="text-gray-600">Complete your registration by providing the details below.</p>
         </div>
-
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* First Name Field */}
           <div>
             <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
               First Name
@@ -77,8 +76,6 @@ const AdditionalInfo: React.FC = () => {
               required
             />
           </div>
-
-          {/* Last Name Field */}
           <div>
             <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
               Last Name
@@ -93,8 +90,6 @@ const AdditionalInfo: React.FC = () => {
               required
             />
           </div>
-
-          {/* Age Field */}
           <div>
             <label htmlFor="age" className="block text-sm font-medium text-gray-700">
               Age
@@ -109,8 +104,6 @@ const AdditionalInfo: React.FC = () => {
               required
             />
           </div>
-
-          {/* Country Dropdown */}
           <div>
             <label htmlFor="country" className="block text-sm font-medium text-gray-700">
               Country
@@ -123,12 +116,10 @@ const AdditionalInfo: React.FC = () => {
               placeholder="Select a country"
               isClearable
               isSearchable
-              value={country} // Bind the current selected value
-              onChange={(selectedOption) => setCountry(selectedOption)} // Update state on change
+              value={country}
+              onChange={(selectedOption) => setCountry(selectedOption)}
             />
           </div>
-
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
@@ -136,13 +127,9 @@ const AdditionalInfo: React.FC = () => {
           >
             {loading ? "Saving..." : "Save Information"}
           </button>
-
-          {/* Error Message */}
           {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
         </form>
       </main>
-
-      {/* Footer */}
       <Footer />
     </div>
   );
