@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from './ui/button';
 import { Label } from './ui/label';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
@@ -17,6 +17,11 @@ import { db } from "../firebaseConfig";
 
 interface AthleteProfileFormProps {
   onSave: (data: any) => void;
+  profileData: {
+    gender: 'male' | 'female' | '';
+    sport: string;
+    sportStatistic: Record<string, any>;
+  };
 }
 
 const sportsOptions: Record<'male' | 'female', { value: string; label: string }[]> = {
@@ -30,19 +35,24 @@ const sportsOptions: Record<'male' | 'female', { value: string; label: string }[
   })),
 };
 
-export function AthleteProfileForm({ onSave }: AthleteProfileFormProps) {
-  const location = useLocation() as { state: { userId?: string } };
-  const userId = location.state?.userId || localStorage.getItem("userId");
-
+export function AthleteProfileForm({ onSave, profileData }: AthleteProfileFormProps) {
   const [formData, setFormData] = useState<{
     gender: 'male' | 'female' | '';
     sport: string;
     sportStatistic: Record<string, any>;
-  }>({
+  }>(profileData || {
     gender: '',
     sport: '',
     sportStatistic: {},
   });
+
+  const location = useLocation() as { state: { userId?: string } };
+  const userId = location.state?.userId || localStorage.getItem("userId");
+
+  useEffect(() => {
+    setFormData(profileData); // Reset form data when profileData changes
+  }, [profileData]);
+
 
   const handleDataChange = (field: string, value: any) => {
     setFormData((prev) => ({

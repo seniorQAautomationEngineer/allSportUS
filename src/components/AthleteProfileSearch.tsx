@@ -42,16 +42,20 @@ const AthleteProfileSearch: React.FC = () => {
     const fetchAthleteData = async () => {
       if (!userId) {
         setError("User ID is missing. Please log in again.");
+        console.error("Error: Missing user ID");
         setLoading(false);
         return;
       }
-
+  
       try {
+        console.log("Fetching data for user ID:", userId);
         const userRef = doc(db, "users", userId);
         const userDoc = await getDoc(userRef);
-
+  
         if (userDoc.exists()) {
           const fetchedData = userDoc.data().sportData || {};
+          console.log("Fetched data:", fetchedData);
+  
           setProfileData({
             gender: fetchedData.gender || '',
             sport: fetchedData.sport || '',
@@ -60,18 +64,20 @@ const AthleteProfileSearch: React.FC = () => {
             name: 'Athlete',
           });
         } else {
+          console.warn("No athlete profile found for user ID:", userId);
           setError("Athlete profile not found. Please complete your profile.");
         }
       } catch (err) {
+        console.error("Error fetching athlete profile:", err);
         setError("Failed to fetch athlete profile. Please try again later.");
-        console.error(err);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchAthleteData();
   }, [userId]);
+  
 
   const handleSave = (data: any) => {
     setProfileData({ ...data, name: profileData.name });
@@ -155,7 +161,7 @@ const AthleteProfileSearch: React.FC = () => {
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
             >
-              <AthleteProfileForm onSave={handleSave} />
+              <AthleteProfileForm onSave={handleSave} profileData={profileData} />
             </motion.div>
           ) : (
             <motion.div
