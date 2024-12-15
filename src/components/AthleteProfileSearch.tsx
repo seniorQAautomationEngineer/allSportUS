@@ -6,31 +6,27 @@ import { AthleteProfileCard } from './athlete-profile-card';
 import { SearchResults } from './search-results';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
-import { Card, CardContent } from "./ui/card";
-import Header from "./ui/Header";
-import Footer from "./ui/Footer";
+import { Card, CardContent } from './ui/card';
+import Header from './ui/Header';
+import Footer from './ui/Footer';
 import axios from 'axios';
-import { useLocation } from "react-router-dom";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import { useLocation } from 'react-router-dom';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 
 const AthleteProfileSearch: React.FC = () => {
   const location = useLocation() as { state: { userId?: string } };
-  const userId = location.state?.userId || localStorage.getItem("userId");
+  const userId = location.state?.userId || localStorage.getItem('userId');
 
   const [isEditing, setIsEditing] = useState(true);
   const [profileData, setProfileData] = useState<{
     gender: '' | 'male' | 'female';
     sport: string;
     sportStatistic: Record<string, any>;
-    additionalData: Record<string, any>;
-    name: string;
   }>({
     gender: '',
     sport: '',
     sportStatistic: {},
-    additionalData: {},
-    name: 'Athlete',
   });
 
   const [loading, setLoading] = useState(true);
@@ -38,49 +34,53 @@ const AthleteProfileSearch: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [response, setResponse] = useState<string | null>(null);
 
+  // Fetch user data on mount
   useEffect(() => {
     const fetchAthleteData = async () => {
       if (!userId) {
-        setError("User ID is missing. Please log in again.");
-        console.error("Error: Missing user ID");
+        setError('User ID is missing. Please log in again.');
         setLoading(false);
         return;
       }
-  
+
       try {
-        console.log("Fetching data for user ID:", userId);
-        const userRef = doc(db, "users", userId);
+        const userRef = doc(db, 'users', userId);
         const userDoc = await getDoc(userRef);
-  
+
         if (userDoc.exists()) {
-          const fetchedData = userDoc.data().sportData || {};
-          console.log("Fetched data:", fetchedData);
-  
+          const fetchedData = userDoc.data()?.sportData || {};
           setProfileData({
             gender: fetchedData.gender || '',
             sport: fetchedData.sport || '',
             sportStatistic: fetchedData.sportStatistic || {},
-            additionalData: fetchedData.additionalData || {},
-            name: 'Athlete',
           });
         } else {
-          console.warn("No athlete profile found for user ID:", userId);
-          setError("Athlete profile not found. Please complete your profile.");
+          setError('No profile data found. Please complete your profile.');
         }
       } catch (err) {
-        console.error("Error fetching athlete profile:", err);
-        setError("Failed to fetch athlete profile. Please try again later.");
+        setError('Failed to fetch data. Try again later.');
+        console.error('Fetch error:', err);
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchAthleteData();
   }, [userId]);
-  
 
+  // Save updated form data
   const handleSave = (data: any) => {
-    setProfileData({ ...data, name: profileData.name });
+    // Filter out empty fields before saving
+    const filteredStats = Object.fromEntries(
+      Object.entries(data.sportStatistic).filter(([_, value]) => value)
+    );
+
+    setProfileData({
+      gender: data.gender,
+      sport: data.sport,
+      sportStatistic: filteredStats, // Save only non-empty stats
+    });
+
     setIsEditing(false);
   };
 

@@ -11,9 +11,9 @@ import femaleSports from '../data/FemaleSports';
 import sportConfigs, { SportParameter } from '../data/sportConfigs';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Input } from './ui/input';
-import { useLocation } from "react-router-dom";
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "../firebaseConfig";
+import { useLocation } from 'react-router-dom';
+import { doc, setDoc } from 'firebase/firestore';
+import { db } from '../firebaseConfig';
 
 interface AthleteProfileFormProps {
   onSave: (data: any) => void;
@@ -40,21 +40,41 @@ export function AthleteProfileForm({ onSave, profileData }: AthleteProfileFormPr
     gender: 'male' | 'female' | '';
     sport: string;
     sportStatistic: Record<string, any>;
-  }>(profileData || {
+  }>({
     gender: '',
     sport: '',
     sportStatistic: {},
   });
 
   const location = useLocation() as { state: { userId?: string } };
-  const userId = location.state?.userId || localStorage.getItem("userId");
+  const userId = location.state?.userId || localStorage.getItem('userId');
 
   useEffect(() => {
-    setFormData(profileData); // Reset form data when profileData changes
+    // Set form data on initialization or when profileData changes
+    if (profileData) {
+      setFormData({
+        gender: profileData.gender || '',
+        sport: profileData.sport || '',
+        sportStatistic: profileData.sportStatistic || {},
+      });
+    }
   }, [profileData]);
 
+  const handleSportChange = (newSport: string) => {
+    const newFields = sportConfigs[newSport]?.fields || [];
+    const resetSportStatistic = newFields.reduce((acc, field) => {
+      acc[field.name] = ''; // Initialize all fields with empty strings
+      return acc;
+    }, {} as Record<string, any>);
 
-  const handleDataChange = (field: string, value: any) => {
+    setFormData({
+      ...formData,
+      sport: newSport,
+      sportStatistic: resetSportStatistic,
+    });
+  };
+
+  const handleDataChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       sportStatistic: {
@@ -72,29 +92,31 @@ export function AthleteProfileForm({ onSave, profileData }: AthleteProfileFormPr
       return;
     }
   
-    try {
-      const updatedSportData = {
-        gender: formData.gender,
-        sport: formData.sport,
-        sportStatistic: formData.sportStatistic,
-      };
+    // Clean `sportStatistic` by removing empty fields
+    const cleanedSportStatistic = Object.fromEntries(
+      Object.entries(formData.sportStatistic).filter(([_, value]) => value)
+    );
   
+    const updatedSportData = {
+      gender: formData.gender,
+      sport: formData.sport,
+      sportStatistic: cleanedSportStatistic, // Include only non-empty fields
+    };
+  
+    try {
       const userRef = doc(db, "users", userId);
   
-      // Replace the sportData field explicitly
-      await setDoc(
-        userRef,
-        { sportData: updatedSportData },
-        { merge: true } // Retain other fields like email, firstName, etc.
-      );
+      // Explicitly overwrite the entire `sportData` object in Firestore
+      await setDoc(userRef, { sportData: updatedSportData }, { merge: false });
   
-      console.log("Sport data updated successfully.");
-      onSave(updatedSportData); // Callback for additional actions
+      console.log("Sport data saved successfully.");
+      onSave(updatedSportData); // Callback for further actions
     } catch (error) {
-      console.error("Error updating sport data:", error);
+      console.error("Error saving sport data:", error);
       alert("Failed to save profile. Please try again.");
     }
   };
+  
 
   const renderField = (field: SportParameter) => {
     switch (field.type) {
@@ -162,6 +184,19 @@ export function AthleteProfileForm({ onSave, profileData }: AthleteProfileFormPr
       default:
         return null;
     }
+
+    return (
+      <div key={field.name} className="space-y-1 p-1 bg-gray-50 rounded-lg mb-1">
+        <Label className="text-sm font-normal">{field.label}:</Label>
+        <Input
+          id={field.name}
+          placeholder={field.placeholder}
+          value={formData.sportStatistic[field.name] || ''}
+          onChange={(e) => handleDataChange(field.name, e.target.value)}
+          className="w-full h-10 text-base"
+        />
+      </div>
+    );
   };
 
   return (
@@ -171,71 +206,60 @@ export function AthleteProfileForm({ onSave, profileData }: AthleteProfileFormPr
       </div>
       <CardContent className="p-4">
         <form onSubmit={handleSubmit} className="space-y-5">
-          <div className="space-y-4">
-            <div>
-              <h2 className="text-base font-semibold mb-1">Gender</h2>
-              <RadioGroup
-                value={formData.gender}
-                onValueChange={(value) =>
-                  setFormData({ ...formData, gender: value as 'male' | 'female' })
-                }
-                className="flex gap-4"
-              >
-                <div className="flex items-center">
-                  <RadioGroupItem value="female" id="female" className="w-5 h-5" />
-                  <Label htmlFor="female" className="ml-2 text-sm">
-                    Female
-                  </Label>
-                </div>
-                <div className="flex items-center">
-                  <RadioGroupItem value="male" id="male" className="w-5 h-5" />
-                  <Label htmlFor="male" className="ml-2 text-sm">
-                    Male
-                  </Label>
-                </div>
-              </RadioGroup>
-            </div>
-
-            {formData.gender && (
-              <div>
-                <label htmlFor="sport-select" className="block text-sm font-medium text-gray-700">
-                  Sport
-                </label>
-                <Select
-                  id="sport-select"
-                  className="react-select-container mt-2"
-                  classNamePrefix="react-select"
-                  options={sportsOptions[formData.gender]}
-                  value={
-                    formData.sport
-                      ? {
-                          value: formData.sport,
-                          label: sportConfigs[formData.sport]?.name || '',
-                        }
-                      : null
-                  }
-                  onChange={(option) =>
-                    setFormData({
-                      ...formData,
-                      sport: option?.value || '',
-                      sportStatistic: {}, // Reset sportStatistic when switching sports
-                    })
-                  }
-                  isClearable
-                  isSearchable
-                  placeholder="Select a sport"
-                />
+          {/* Gender */}
+          <div>
+            <h2 className="text-base font-semibold mb-1">Gender</h2>
+            <RadioGroup
+              value={formData.gender}
+              onValueChange={(value) =>
+                setFormData({ ...formData, gender: value as 'male' | 'female' })
+              }
+              className="flex gap-4"
+            >
+              <div className="flex items-center">
+                <RadioGroupItem value="female" id="female" />
+                <Label htmlFor="female" className="ml-2 text-sm">
+                  Female
+                </Label>
               </div>
-            )}
-
-            {formData.sport &&
-              sportConfigs[formData.sport].fields.map((field) => renderField(field))}
+              <div className="flex items-center">
+                <RadioGroupItem value="male" id="male" />
+                <Label htmlFor="male" className="ml-2 text-sm">
+                  Male
+                </Label>
+              </div>
+            </RadioGroup>
           </div>
 
-          <Button
-            type="submit"
-            className="w-full py-2.5 text-sm font-medium bg-blue-500 hover:bg-blue-600 text-white rounded"
-          >
+          {/* Sport */}
+          {formData.gender && (
+              <div>
+              <label htmlFor="sport-select" className="block text-sm font-medium text-gray-700">
+                Sport
+              </label>
+            <Select
+              id="sport-select"
+              className="react-select-container mt-2"
+              classNamePrefix="react-select"
+              options={sportsOptions[formData.gender as 'male' | 'female']}
+              value={
+                formData.sport
+                  ? { value: formData.sport, label: sportConfigs[formData.sport]?.name || '' }
+                  : null
+              }
+              onChange={(option) => handleSportChange(option?.value || '')}
+              placeholder="Select a sport"
+              isClearable
+            />
+            </div>
+          )}
+          
+
+          {/* Sport-Specific Fields */}
+          {formData.sport &&
+            sportConfigs[formData.sport]?.fields.map((field) => renderField(field))}
+
+          <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white">
             Save Profile
           </Button>
         </form>
