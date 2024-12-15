@@ -6,27 +6,36 @@ import { AthleteProfileCard } from './athlete-profile-card';
 import { SearchResults } from './search-results';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
-import { Card, CardContent } from './ui/card';
-import Header from './ui/Header';
-import Footer from './ui/Footer';
+import { Card, CardContent } from "./ui/card";
+import Header from "./ui/Header";
+import Footer from "./ui/Footer";
 import axios from 'axios';
-import { useLocation } from 'react-router-dom';
-import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebaseConfig';
+import { useLocation, useNavigate } from "react-router-dom";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { db } from "../firebaseConfig";
+
+
+interface LocationState {
+  userId?: string;
+}
 
 const AthleteProfileSearch: React.FC = () => {
-  const location = useLocation() as { state: { userId?: string } };
-  const userId = location.state?.userId || localStorage.getItem('userId');
+  const location = useLocation() as { pathname: string; state?: LocationState };
+  const userId = location.state?.userId || localStorage.getItem("userId");
 
-  const [isEditing, setIsEditing] = useState(true);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
   const [profileData, setProfileData] = useState<{
     gender: '' | 'male' | 'female';
     sport: string;
     sportStatistic: Record<string, any>;
+    additionalData: Record<string, any>;
+    name: string;
   }>({
     gender: '',
     sport: '',
     sportStatistic: {},
+    additionalData: {},
+    name: 'Athlete',
   });
 
   const [loading, setLoading] = useState(true);
@@ -34,60 +43,89 @@ const AthleteProfileSearch: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [response, setResponse] = useState<string | null>(null);
 
-  // Fetch user data on mount
+  // Fetch Athlete Data and `isEditing` State
   useEffect(() => {
     const fetchAthleteData = async () => {
       if (!userId) {
-        setError('User ID is missing. Please log in again.');
+        setError("User ID is missing. Please log in again.");
+        console.error("Error: Missing user ID");
         setLoading(false);
         return;
       }
-
+  
       try {
-        const userRef = doc(db, 'users', userId);
-        const userDoc = await getDoc(userRef);
-
+        console.log("Fetching data for user ID:", userId);
+  
+        const userRef = doc(db, "users", userId);
+        const userDoc = await getDoc(userRef); // Correctly fetch document snapshot
+  
         if (userDoc.exists()) {
-          const fetchedData = userDoc.data()?.sportData || {};
+          const fetchedData = userDoc.data().sportData || {};
+          const fetchedIsEditing = userDoc.data().isEditing;
+  
           setProfileData({
             gender: fetchedData.gender || '',
             sport: fetchedData.sport || '',
             sportStatistic: fetchedData.sportStatistic || {},
+            additionalData: fetchedData.additionalData || {},
+            name: 'Athlete',
           });
+  
+          setIsEditing(fetchedIsEditing ?? false); // Default to false if undefined
+          setError(null); // Clear any existing error
         } else {
-          setError('No profile data found. Please complete your profile.');
+          console.warn("No athlete profile found for user ID:", userId);
+          setError("Athlete profile not found. Please complete your profile.");
+          setIsEditing(true); // Default to editing mode
         }
       } catch (err) {
-        setError('Failed to fetch data. Try again later.');
-        console.error('Fetch error:', err);
+        console.error("Error fetching athlete profile:", err);
+        setError("Failed to fetch athlete profile. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchAthleteData();
-  }, [userId]);
+  }, [userId, location.pathname]);
+  
 
-  // Save updated form data
-  const handleSave = (data: any) => {
-    // Filter out empty fields before saving
-    const filteredStats = Object.fromEntries(
-      Object.entries(data.sportStatistic).filter(([_, value]) => value)
-    );
-
-    setProfileData({
-      gender: data.gender,
-      sport: data.sport,
-      sportStatistic: filteredStats, // Save only non-empty stats
-    });
-
-    setIsEditing(false);
+  // Save Athlete Data and Update Editing State
+  const handleSave = async (data: any) => {
+    if (!userId) {
+      console.error("Error: Missing user ID. Cannot save athlete profile.");
+      setError("User ID is missing. Please log in again.");
+      return; // Exit the function if userId is invalid
+    }
+  
+    try {
+      // Reference to the Firestore document
+      const userRef = doc(db, "users", userId);
+  
+      // Save the data with Firestore's merge option
+      await setDoc(
+        userRef,
+        { sportData: data, isEditing: false }, // Save sportData and isEditing state
+        { merge: true } // Merge data without overwriting the entire document
+      );
+  
+      // Update local state
+      setProfileData({ ...data, name: profileData.name });
+      setIsEditing(false); // Switch back to view mode
+      console.log("Athlete profile saved successfully.");
+    } catch (error) {
+      console.error("Error saving athlete profile:", error);
+      setError("Failed to save athlete profile. Please try again.");
+    }
   };
+  
 
+  // Switch to Editing Mode
   const handleEdit = () => {
     setIsEditing(true);
   };
 
+  // Search Logic for NCAA Programs
   const handleSearch = async () => {
     setIsSearching(true);
     setResponse(null);
