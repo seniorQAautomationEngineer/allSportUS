@@ -10,7 +10,7 @@ const maleSports: { name: string; emoji: string }[] = [
     { name: 'Football', emoji: '🏈' },
     { name: 'Golf', emoji: '⛳' },
     { name: 'Gymnastics', emoji: '🤸' },
-    { name: 'Ice Hockey', emoji: '🏒' },
+    { name: "Ice Hockey", emoji: "🏒" },
     { name: 'Lacrosse', emoji: '🥍' },
     { name: 'Rifle', emoji: '🎯' },
     { name: 'Rowing', emoji: '🚣' },
