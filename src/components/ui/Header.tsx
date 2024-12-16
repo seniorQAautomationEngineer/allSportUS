@@ -29,7 +29,7 @@ const Header: React.FC = () => {
   const navLinks = [
     { text: 'Home', path: '/home', condition: !user },
     { text: 'Search', path: '/search', condition: user },
-    { text: 'About', path: '/about', condition: true },
+    { text: 'About Us', path: '/about', condition: true },
     { text: 'Contact', path: '/contact', condition: true },
     { text: 'FAQ', path: '/faq', condition: true },
   ];
@@ -56,7 +56,7 @@ const Header: React.FC = () => {
             {navLinks.map(
               (link) =>
                 link.condition &&
-                location.pathname !== link.path && (
+                location.pathname !== link.path && ( // Ensure only the current path is excluded
                   <Link
                     key={link.text}
                     to={link.path}

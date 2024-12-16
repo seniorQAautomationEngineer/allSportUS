@@ -1,0 +1,30 @@
+const maleSports: { name: string; emoji: string }[] = [
+    { name: 'Baseball', emoji: '⚾' },
+    { name: 'Basketball', emoji: '🏀' },
+    { name: 'Bowling', emoji: '🎳' },
+    { name: 'Cheerleading', emoji: '📣' },
+    { name: 'Cross Country', emoji: '🏃' },
+    { name: 'Diving', emoji: '🤿' },
+    { name: 'ESports', emoji: '🎮' },
+    { name: 'Fencing', emoji: '🤺' },
+    { name: 'Football', emoji: '🏈' },
+    { name: 'Golf', emoji: '⛳' },
+    { name: 'Gymnastics', emoji: '🤸' },
+    { name: "Ice Hockey", emoji: "🏒" },
+    { name: 'Lacrosse', emoji: '🥍' },
+    { name: 'Rifle', emoji: '🎯' },
+    { name: 'Rowing', emoji: '🚣' },
+    { name: 'Rugby', emoji: '🏉' },
+    { name: 'Skiing', emoji: '⛷️' },
+    { name: 'Soccer', emoji: '⚽' },
+    { name: 'Swimming', emoji: '🏊' },
+    { name: 'Tennis', emoji: '🎾' },
+    { name: 'Track & Field', emoji: '🏃‍♂️' },
+    { name: 'Triathlon', emoji: '🏊‍♂️🚴‍♂️🏃‍♂️' },
+    { name: 'Volleyball', emoji: '🏐' },
+    { name: 'Water Polo', emoji: '🤽' },
+    { name: 'Wrestling', emoji: '🤼' },
+  ];
+  
+  export default maleSports;
+  
