@@ -16,6 +16,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import styles from './styles/profile-settings.module.css'
 import Header from './ui/Header';
 import Footer from './ui/Footer';
+import { User, signOut } from 'firebase/auth';
+import { auth } from '../firebaseConfig';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -66,6 +69,9 @@ export default function ProfileSettings() {
     console.log("Date selection canceled")
   }
 
+
+  const [user, setUser] = useState<User | null>(null);
+  const navigate = useNavigate();
   const [isEditingPersonalInfo, setIsEditingPersonalInfo] = useState(false)
   const [tempProfile, setTempProfile] = useState<UserProfile>(profile)
   const [isEditingPassword, setIsEditingPassword] = useState(false)
@@ -110,9 +116,15 @@ export default function ProfileSettings() {
     setIsConfirmingDelete(true)
   }
 
-  const handleSignOut = () => {
-    console.log('Signing out')
-  }
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      setUser(null);
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
 
   const handleFinalDelete = () => {
     console.log('Deleting account')

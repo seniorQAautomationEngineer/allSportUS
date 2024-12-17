@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { auth } from '../../firebaseConfig';
-import { User, signOut } from 'firebase/auth';
-import { LogOut, UserIcon } from 'lucide-react';
+import { User} from 'firebase/auth';
+import { UserIcon } from 'lucide-react';
 
 const Header: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -16,16 +15,7 @@ const Header: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      setUser(null);
-      navigate('/');
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
-  };
-
+  
   const navLinks = [
     { text: 'Home', path: '/home', condition: !user },
     { text: 'Search', path: '/search', condition: user },
@@ -77,13 +67,6 @@ const Header: React.FC = () => {
                     <span>Profile</span>
                   </Link>
                 )}
-                <button
-                  onClick={handleSignOut}
-                  className="flex items-center space-x-2 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md transition-colors duration-200"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Sign Out</span>
-                </button>
               </>
             ) : (
               <>
