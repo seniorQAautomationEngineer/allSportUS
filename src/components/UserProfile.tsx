@@ -14,7 +14,8 @@ import { Calendar } from "./ui/calendar"
 import { Checkbox } from "./ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 import styles from './styles/profile-settings.module.css'
-
+import Header from './ui/Header';
+import Footer from './ui/Footer';
 
 
 
@@ -191,7 +192,7 @@ export default function ProfileSettings() {
   }
 
   return (
-    <div className={`${styles.container} flex flex-col items-center`}>
+    <><Header /><div className={`${styles.container} flex flex-col items-center`}>
       <div className={`${styles.header} text-center pt-16 space-y-2`}>
         <div className={`${styles.headerEmoji} text-7xl`}>🔧</div>
         <h1 className={`${styles.headerTitle} font-bold text-[40px]`}>Profile Settings</h1>
@@ -221,17 +222,17 @@ export default function ProfileSettings() {
             </CardHeader>
             <CardContent className={`${styles.cardContent} space-y-5 pt-5`}>
               <div className={`${styles.formGroup} space-y-5`}>
-              {renderPersonalInfoFields()}
-              {isEditingPersonalInfo && (
-                <div className={`${styles.buttonGroup} mt-6 flex space-x-2`}>
-                  <Button onClick={handleSavePersonalInfo} size="sm" className={`${styles.button} ${styles.buttonPrimary} flex-1 bg-blue-500 hover:bg-blue-600`}>
-                    Save
-                  </Button>
-                  <Button onClick={handleCancelPersonalInfo} variant="outline" size="sm" className={`${styles.button} ${styles.buttonSecondary} flex-1`}>
-                    Cancel
-                  </Button>
-                </div>
-              )}
+                {renderPersonalInfoFields()}
+                {isEditingPersonalInfo && (
+                  <div className={`${styles.buttonGroup} mt-6 flex space-x-2`}>
+                    <Button onClick={handleSavePersonalInfo} size="sm" className={`${styles.button} ${styles.buttonPrimary} flex-1 bg-blue-500 hover:bg-blue-600`}>
+                      Save
+                    </Button>
+                    <Button onClick={handleCancelPersonalInfo} variant="outline" size="sm" className={`${styles.button} ${styles.buttonSecondary} flex-1`}>
+                      Cancel
+                    </Button>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -250,8 +251,7 @@ export default function ProfileSettings() {
                       type="password"
                       value="••••••••"
                       disabled
-                      className={styles.input}
-                    />
+                      className={styles.input} />
                   </div>
                   {!isEditingPassword && (
                     <Button
@@ -273,8 +273,7 @@ export default function ProfileSettings() {
                         placeholder="Enter your current password"
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
-                        className={styles.input}
-                      />
+                        className={styles.input} />
                     </div>
                     <div className={styles.formGroup}>
                       <Label htmlFor="new-password" className={`${styles.label} mb-2`}>New Password</Label>
@@ -284,8 +283,7 @@ export default function ProfileSettings() {
                         placeholder="Enter your new password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        className={styles.input}
-                      />
+                        className={styles.input} />
                     </div>
                     <div className={styles.formGroup}>
                       <Label htmlFor="confirm-password" className={`${styles.label} mb-2`}>Confirm Password</Label>
@@ -295,13 +293,12 @@ export default function ProfileSettings() {
                         placeholder="Confirm your new password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className={styles.input}
-                      />
+                        className={styles.input} />
                     </div>
                     <div className={`${styles.buttonGroup} mt-4 flex space-x-2`}>
-                      <Button 
-                        onClick={handleSavePassword} 
-                        size="sm" 
+                      <Button
+                        onClick={handleSavePassword}
+                        size="sm"
                         className={`${styles.button} ${styles.buttonPrimary} flex-1 bg-blue-500 hover:bg-blue-600`}
                       >
                         Save
@@ -312,7 +309,7 @@ export default function ProfileSettings() {
                           setCurrentPassword('')
                           setNewPassword('')
                           setConfirmPassword('')
-                        }}
+                        } }
                         variant="outline"
                         size="sm"
                         className={`${styles.button} ${styles.buttonSecondary} flex-1`}
@@ -330,7 +327,7 @@ export default function ProfileSettings() {
                 <Button
                   onClick={handleSignOut}
                   variant="outline"
-                  className={`${styles.button} ${styles.buttonSignOut} flex-1`} 
+                  className={`${styles.button} ${styles.buttonSignOut} flex-1`}
                 >
                   Sign Out
                 </Button>
@@ -361,7 +358,7 @@ export default function ProfileSettings() {
                   <Label className={`${styles.label} text-lg font-semibold mb-4 block`}>Why are you deleting your account?</Label>
                   <div className="space-y-4">
                     {deletionReasons.map((reason) => (
-                      <div 
+                      <div
                         key={reason.id}
                         className="flex items-center space-x-3 p-3 rounded-md bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
                       >
@@ -369,14 +366,12 @@ export default function ProfileSettings() {
                           id={reason.id}
                           checked={selectedReasons.includes(reason.id)}
                           onCheckedChange={(checked) => {
-                            setSelectedReasons(prev =>
-                              checked
-                                ? [...prev, reason.id]
-                                : prev.filter(id => id !== reason.id)
+                            setSelectedReasons(prev => checked
+                              ? [...prev, reason.id]
+                              : prev.filter(id => id !== reason.id)
                             )
-                          }}
-                          className={`${styles.checkbox} h-5 w-5`}
-                        />
+                          } }
+                          className={`${styles.checkbox} h-5 w-5`} />
                         <Label
                           htmlFor={reason.id}
                           className="text-sm font-medium text-gray-700 cursor-pointer flex-grow"
@@ -395,8 +390,7 @@ export default function ProfileSettings() {
                     value={deletionReason}
                     onChange={(e) => setDeletionReason(e.target.value)}
                     rows={3}
-                    className={`${styles.textarea} w-full px-3 py-2 text-sm`}
-                  />
+                    className={`${styles.textarea} w-full px-3 py-2 text-sm`} />
                 </div>
               </div>
               <div className={`${styles.formGroup} space-y-2`}>
@@ -407,8 +401,7 @@ export default function ProfileSettings() {
                   value={improvementSuggestion}
                   onChange={(e) => setImprovementSuggestion(e.target.value)}
                   rows={4}
-                  className={`${styles.textarea} w-full px-3 py-2 text-sm`}
-                />
+                  className={`${styles.textarea} w-full px-3 py-2 text-sm`} />
               </div>
               <div className={`${styles.buttonGroup} mt-8 flex flex-col sm:flex-row sm:justify-between sm:space-x-4 mb-8`}>
                 <Button
@@ -422,7 +415,7 @@ export default function ProfileSettings() {
                   onClick={() => {
                     setIsConfirmingDelete(false)
                     setShowDeleteWarning(false)
-                  }}
+                  } }
                   variant="outline"
                   className={`${styles.button} ${styles.buttonSecondary} w-full sm:w-1/2`}
                 >
@@ -433,7 +426,7 @@ export default function ProfileSettings() {
           </Card>
         </div>
       )}
-    </div>
+    </div><Footer /></>
   )
 }
 
