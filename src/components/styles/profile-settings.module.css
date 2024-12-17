@@ -1,0 +1,45 @@
+:root {
+    --primary: #007bff;
+    --primary-foreground: #fff;
+    --secondary: #6c757d;
+    --secondary-foreground: #fff;
+  }
+  
+  .buttonPrimary {
+    background-color: #4285F4;
+    color: white;
+  }
+  
+  .buttonPrimary:hover {
+    background-color: #3b7de2;
+  }
+  
+  .buttonSecondary {
+    background-color: white;
+    color: #374151;
+    border: 1px solid #d1d5db;
+  }
+  
+  .buttonSecondary:hover {
+    background-color: #f3f4f6;
+  }
+  
+  .buttonDanger {
+    background-color: #ef4444;
+    color: white;
+  }
+  
+  .buttonDanger:hover {
+    background-color: #dc2626;
+  }
+  
+  .buttonSignOut {
+    background-color: #111827 !important;
+    color: white !important;
+}
+  .buttonSignOut:hover {
+    background-color: #1f2937 !important;
+}
+
+  
+  
