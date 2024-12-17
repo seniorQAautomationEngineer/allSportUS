@@ -13,8 +13,6 @@ import { format } from "date-fns"
 import { Calendar } from "./ui/calendar"
 import { Checkbox } from "./ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
-import DatePicker from "react-datepicker" // Import DatePicker
-import "react-datepicker/dist/react-datepicker.css" // Import DatePicker styles
 import styles from './styles/profile-settings.module.css'
 
 
@@ -332,7 +330,7 @@ export default function ProfileSettings() {
                 <Button
                   onClick={handleSignOut}
                   variant="outline"
-                  className={`bg-gray-900 text-white hover:bg-gray-700 ${styles.buttonSignOut}`} 
+                  className={`${styles.button} ${styles.buttonSignOut} flex-1`} 
                 >
                   Sign Out
                 </Button>
