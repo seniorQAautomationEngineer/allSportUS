@@ -1,6 +1,7 @@
 'use client'
 
 import './styles/globals.css'
+import allCountries from "src/data/AllCountries";
 import { useState } from 'react'
 import { Button } from "./ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
@@ -12,13 +13,15 @@ import { Textarea } from "./ui/textarea"
 import { format } from "date-fns"
 import { Calendar } from "./ui/calendar"
 import { Checkbox } from "./ui/checkbox"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
+import Select from "react-select";
 import styles from './styles/profile-settings.module.css'
 import Header from './ui/Header';
 import Footer from './ui/Footer';
 import { User, signOut } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
+import DatePicker from "react-datepicker"; // Add the react-datepicker library
+import "react-datepicker/dist/react-datepicker.css"; // Add the datepicker styles
 
 
 
@@ -30,19 +33,6 @@ interface UserProfile {
   dateOfBirth: Date
 }
 
-const countries = [
-  "United States",
-  "Canada",
-  "United Kingdom",
-  "Australia",
-  "Germany",
-  "France",
-  "Japan",
-  "Brazil",
-  "India",
-  "China",
-  // Add more countries as needed
-]
 
 const deletionReasons = [
   { id: "not-useful", label: "I don't find the service useful" },
@@ -53,6 +43,7 @@ const deletionReasons = [
 ]
 
 export default function ProfileSettings() {
+  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null); // New DOB state
   const [profile, setProfile] = useState<UserProfile>({
     firstName: 'John',
     lastName: 'Doe',
@@ -84,6 +75,7 @@ export default function ProfileSettings() {
   const [improvementSuggestion, setImprovementSuggestion] = useState('')
   const [selectedReasons, setSelectedReasons] = useState<string[]>([])
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
+  const [country, setCountry] = useState<{ value: string; label: string } | null>(null);
 
   const handleEditPersonalInfo = () => {
     setIsEditingPersonalInfo(true)
@@ -140,46 +132,34 @@ export default function ProfileSettings() {
 
       if (key === 'country') {
         content = (
-          <Select
-            value={tempProfile[key]}
-            onValueChange={(value) => handleChange(key as keyof UserProfile, value)}
-            disabled={!isEditingPersonalInfo}
-          >
-            <SelectTrigger className={styles.select}>
-              <SelectValue placeholder="Select a country" />
-            </SelectTrigger>
-            <SelectContent>
-              {countries.map((country) => (
-                <SelectItem key={country} value={country}>
-                  {country}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )
-      } else if (key === 'dateOfBirth') {
-        content = (
-          <div className={`${styles.formGroup} space-y-2`}>
-            <Button
-              variant="outline"
-              onClick={() => isEditingPersonalInfo && setIsCalendarOpen(!isCalendarOpen)}
-              className={`${styles.button} ${styles.buttonSecondary} w-full justify-start text-left font-normal`}
+            <Select
+              id="country"
+              className="react-select-container mt-2"
+              classNamePrefix="react-select"
+              options={allCountries}
+              placeholder="Select a country"
+              isClearable
+              isSearchable
+              value={{ value: tempProfile.country, label: tempProfile.country }}
+              onChange={(selectedOption) => {
+                handleChange(key as keyof UserProfile, selectedOption?.value || '');
+              }}
+              isDisabled={!isEditingPersonalInfo}
+            />
+          );
+        } else if (key === 'dateOfBirth') {
+          content = (
+            <DatePicker
+              id="dateOfBirth"
+              selected={tempProfile.dateOfBirth}
+              onChange={(date) => handleChange(key as keyof UserProfile, date || new Date())}
+              dateFormat="yyyy-MM-dd"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              placeholderText="Select your date of birth"
               disabled={!isEditingPersonalInfo}
-            >
-              {format(tempProfile.dateOfBirth, 'PP')}
-            </Button>
-            {isCalendarOpen && isEditingPersonalInfo && (
-              <div className="absolute z-50 bg-white rounded-lg shadow-lg border border-gray-200">
-                <Calendar 
-                  initialDate={new Date()} 
-                  onSave={handleSave} 
-                  onCancel={handleCancel} 
-                />
-              </div>
-            )}
-          </div>
-        )
-      } else {
+            />
+          );
+        }  else {
         content = (
           <Input
             id={key}

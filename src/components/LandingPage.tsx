@@ -23,14 +23,14 @@ export default function LandingPage() {
             Unlock the door to scholarships with data-driven AI matches based on real sports season insights.
           </p>
           <div className="max-w-md mx-auto relative">
-            <input 
+            {/* <input 
               type="email" 
               placeholder="Your Email" 
               className="w-full px-6 py-3 pr-32 rounded-full border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#4A90E2] focus:border-transparent"
             />
             <button className="absolute right-1 top-1 bottom-1 px-6 bg-[#4A90E2] hover:bg-[#3A7BC2] text-white rounded-full transition-colors">
               Start For Free
-            </button>
+            </button> */}
           </div>
         </section>
 
